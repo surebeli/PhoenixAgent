@@ -1,0 +1,35 @@
+# Claude Code 本地态（每机独立，永不 commit）
+.claude/
+
+# 运行日志 / 临时产物
+logs/
+*.log
+
+# 误入的 Windows 绝对路径目录（某些工具把 "F:\..." 当作相对路径创建）
+F:/
+
+# 外部对话稿 / 大二进制私有材料
+grok-chat.pdf
+
+# 凭证与密钥（防御性 — 正版凭证在 ~/.config/phoenix/keys.env，不在 repo 内）
+*.secret
+*.key
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# OS / 编辑器
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Node
+node_modules/
