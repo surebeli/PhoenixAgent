@@ -1,0 +1,85 @@
+.gitignore
+  c59cebd1c95ccb39 1-35
+docs/roadmap.md
+  c59cebd1c95ccb39 1-136
+docs/RnD-Analysis.md
+  c59cebd1c95ccb39 124-325
+docs/quality/acceptance-checklist.md
+  c59cebd1c95ccb39 1-290
+docs/teaching/M0/foundations/F-01-react-paradigm.md
+  c59cebd1c95ccb39 1-101
+docs/adr/README.md
+  c59cebd1c95ccb39 1-160
+AGENTS.md
+  c59cebd1c95ccb39 1-128
+docs/milestones/M0-doctor-baseline.md
+  c59cebd1c95ccb39 1-130
+docs/rules/harness-flags-policy.md
+  c59cebd1c95ccb39 1-195
+tools/ci-check-flags.py
+  c59cebd1c95ccb39 1-282
+docs/rules/git-workflow.md
+  c59cebd1c95ccb39 1-314
+docs/adr/ADR-0001-harness-flags-frozen.md
+  c59cebd1c95ccb39 1-137
+.github/PULL_REQUEST_TEMPLATE.md
+  c59cebd1c95ccb39 1-105
+docs/rules/spec-change-policy.md
+  c59cebd1c95ccb39 1-223
+docs/adr/ADR-0000-adopt-adr.md
+  c59cebd1c95ccb39 1-112
+tools/ci-check-adr.py
+  c59cebd1c95ccb39 1-334
+artifacts/doctor-m0-baseline.json
+  c59cebd1c95ccb39 1
+docs/SPEC.md
+  c59cebd1c95ccb39 1-931
+docs/adr/ADR-TEMPLATE.md
+  c59cebd1c95ccb39 1-109
+tools/ci-check-spec.py
+  c59cebd1c95ccb39 1-520
+docs/rules/documentation-rules.md
+  c59cebd1c95ccb39 1-240
+docs/quality/definition-of-done.md
+  c59cebd1c95ccb39 1-232
+tools/ci-check-milestone-dod.py
+  c59cebd1c95ccb39 1-420
+docs/README.md
+  c59cebd1c95ccb39 1-275
+CLAUDE.md
+  c59cebd1c95ccb39 1-50
+docs/quality/test-strategy.md
+  c59cebd1c95ccb39 1-214
+docs/milestones/M0-plan.md
+  c59cebd1c95ccb39 3-4,8,32,93-97,100-102,110,159,190,239-240,248,307,328,354,377,402,430,442
+tools/phoenix-doctor.sh
+  c59cebd1c95ccb39 1-342
+tools/ci-check-teaching.py
+  c59cebd1c95ccb39 1-663
+docs/risk-register.md
+  c59cebd1c95ccb39 1-169
+docs/rules/learning-artifact-rules.md
+  c59cebd1c95ccb39 1-328
+docs/quality/code-review-checklist.md
+  c59cebd1c95ccb39 1-165
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.1",
+  "base_commit_sha": "9b5795b71277525e63c452b771dcb611b7f0e281",
+  "prompts": {
+    "c59cebd1c95ccb39": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bdfece98-79e5-4d85-8efb-369d40fa2377",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "litianyi",
+      "messages": [],
+      "total_additions": 8279,
+      "total_deletions": 202,
+      "accepted_lines": 9293,
+      "overriden_lines": 121
+    }
+  }
+}
