@@ -249,11 +249,18 @@ class Checker:
     # -- SPEC 版本号清单 --
 
     def load_known_spec_versions(self) -> None:
-        """从 SPEC.md 首部和可能的 migrations 目录收集已知版本号。"""
+        """从 SPEC.md 首部、§19 变更日志表格行和可能的 migrations 目录收集已知版本号。
+
+        历史版本同样合法（`L-ART-2` 允许 "当前或历史 SPEC.md 存在过的版本号"）；
+        因此扫描范围除首部外还包含变更日志表格 `| v1.1 |` 这类列首，避免 SPEC 升版后老节点
+        的 `spec_version: v1.1` 被误判为不存在。
+        """
         self.known_spec_versions = set()
         if self.spec_path.exists():
-            first_k = self.spec_path.read_text(encoding="utf-8")[:2000]
-            for m in re.finditer(r"v(\d+\.\d+(?:\.\d+)?)", first_k):
+            text = self.spec_path.read_text(encoding="utf-8")
+            for m in re.finditer(r"v(\d+\.\d+(?:\.\d+)?)", text[:2000]):
+                self.known_spec_versions.add("v" + m.group(1))
+            for m in re.finditer(r"^\|\s*v(\d+\.\d+(?:\.\d+)?)\s*\|", text, flags=re.MULTILINE):
                 self.known_spec_versions.add("v" + m.group(1))
         mig_dir = self.root / "docs" / "migrations"
         if mig_dir.is_dir():

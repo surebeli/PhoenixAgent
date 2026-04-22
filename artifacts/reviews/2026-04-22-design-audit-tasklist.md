@@ -4,7 +4,7 @@
 - 基于：[2026-04-22-design-audit.md](2026-04-22-design-audit.md)
 - 目的：把审查结论转成可追踪的修复任务；每项含优先级、触发条件、DoD、所属 Milestone 位置、决策开关
 - 状态图例：`待决策` / `待执行` / `进行中` / `已完成` / `已拒绝` / `延后`
-- 当前全部条目状态：`部分待执行`（`D-1 / D-2 / D-3 / D-4 / D-5 / D-7 / D-8` 已闭合；`D-6` 待决策）
+- 当前全部条目状态：决策 `D-1 ~ D-8` 全部闭合；T-* 任务状态以下文正文为准（本文件 2026-04-22 第二轮修订后已对齐真实状态）
 
 ---
 
@@ -22,6 +22,7 @@
 - 2026-04-22：完成 `T-P1-4` 批次 1；不新增 Tier-2 规则文件，改为在 `documentation-rules.md` 追加 ID 定义点允许形态，并同步扩展 `ci-check-spec.py`；warning 从 `153` 降到 `3`。
 - 2026-04-22：完成 `T-P1-4` 批次 2/3；`ci-check-spec.py` 对 `M0 §0` 真豁免生效，Tier-0 中对 `M0-plan.md` 的反向文件名引用已清理，warning 从 `3` 降到 `0`，`T-P1-4` 整体完成。
 - 2026-04-22：作者确认 `D-8 = B`，冻结粒度降为字段与职责边界；完成 `T-P2-1`，更新 roadmap、M0-plan DoD-7 及 spec-change-policy 中对 soft-freeze 的定义，实现平滑收敛。
+- 2026-04-22（第二轮修订 / R2）：对第一轮"全部完成"结论做事实核查，发现 `T-P1-2 / T-P1-5 / T-P2-2 / T-P2-3` 在摘要表声称已完成但正文缺证据链；本轮补齐 SPEC v1.2 `CostBreakdown`、`experiment-report` 双曲线字段、M1-plan.md 拆分后下游引用修复、DoD `[auto]/[review]/[hybrid]` 标签补漏，并把无法本轮闭合的分支（reviewer checklist C-4、`ci-check-teaching.py` 能力块合并校验）明确登记为后续波次。同步修复本文件 §5 重复行、§7 摘要表表头、§8 尾部乱码。
 
 ---
 
@@ -146,6 +147,18 @@
   4. `M2-plan DoD-M2-4` 同步改写。
 - **DoD**：SPEC / PRD / M2-plan 三份一致；ci-check-spec 不报 warning；历史 experiment-report（如有）允许 missing，但新 report 必须双曲线。
 - **挂载位置**：进入 M1 前完成；涉及 SPEC / PRD 双改，需要触发 `spec-change-policy.md` 的 Minor 变更流程。
+- **状态**：已完成（R2 补齐）
+- **证据**：
+  - commit SHA：未提交
+  - 改动文件：`docs/adr/ADR-0003-cost-breakdown-dual-budget.md`、`docs/SPEC.md`、`docs/rules/learning-artifact-rules.md`、`artifacts/reviews/2026-04-22-design-audit-tasklist.md`、`artifacts/reviews/2026-04-22-design-audit.md`（以及 R1 已完成的 `docs/PRD.md` / `docs/milestones/M2-plan.md` 中的 `M2-KPI-3a/3b` 拆分）
+  - 结构结果：
+    - SPEC `v1.1 -> v1.2`；§7.1 新增 `CostBreakdown`；`BenchmarkReport.cost: CostBreakdown` 为权威字段，`cost_usd` 保留为 `property` 别名；`INV-EV-3` 改为对四子字段的交叉校验；§19 变更日志追加 v1.2 条目。
+    - 新增 ADR-0003 记录 Minor 变更的候选方案、决定与后果（含回滚条件与引用面约束）。
+    - `learning-artifact-rules §3.3` 新增 `cost: CostBreakdown` 四子字段示例 + `L-ART-9`；§10 变更日志追加 v1.1。
+  - `py -3 tools/ci-check-spec.py`：`错误 0 / 警告 0 / 全部通过`
+  - `py -3 tools/ci-check-adr.py`：`扫描 ADR: 4 / 错误 0 / 警告 0 / 全部通过`
+  - `py -3 tools/ci-check-milestone-dod.py`：`错误 0 / 警告 0 / 全部通过`
+- **完成日期**：2026-04-22（R2）
 
 ### T-P1-3：Kimi smoke gate 前置到 M0/M1
 
@@ -208,6 +221,17 @@
   2. 在 `docs/quality/definition-of-done.md` 里给"stretch DoD"一个明确定义。
 - **DoD**：Milestone 文档拆分或 stretch 标签落地；与 M0 出口条件不产生循环依赖。
 - **挂载位置**：M0 结束前必须定型，否则 M1 开工瞬间就会膨胀。
+- **状态**：已完成（R2 补齐；R1 只完成了文件骨架拆分，§0/§1 DoD 未实质切分）
+- **证据**：
+  - commit SHA：未提交
+  - 改动文件：`docs/milestones/M1-plan.md`（R2 新建为索引入口）、`docs/milestones/M1a-plan.md`、`docs/milestones/M1b-plan.md`、`artifacts/reviews/2026-04-22-design-audit-tasklist.md`
+  - 结构结果：
+    - M1a-plan §0/§1：北极星聚焦"自研 Core + 编程插件 + subset evaluation + `kimi-worker` smoke"；DoD 条款为 `DoD-M1-1 / 1a / 2 / 3 / 4 / 5a / 6 / 9a / 10a`。
+    - M1b-plan §0/§1：北极星聚焦"长程任务 + Auto-Research 3+ 轮 + Memory 七动词全量"；DoD 条款为 `DoD-M1-5b / 7 / 8 / 9b / 10b`；启动硬前置为 M1a §1 全部成立。
+    - M1-plan.md：作为索引入口保留下游引用（SPEC §18 目录、`README.md` §x、`roadmap.md`、`DoD §6`、`M2-plan.md §0`、`documentation-rules §x`、`ADR-0002` 等），§0/§1 列出全局启动前提与全量 DoD 汇总；§3 拆分总览表一目了然。
+    - DoD-M1-5 拆为 5a/5b；DoD-M1-9 拆为 9a/9b；DoD-M1-10 拆为 10a/10b；向量完整无遗漏。
+  - `py -3 tools/ci-check-milestone-dod.py`：`扫描 plan: 3（含 M1-plan / M1a / M1b） / DoD 总数: 23 / 错误 0 / 警告 0 / 全部通过`
+- **完成日期**：2026-04-22（R2）
 
 ---
 
@@ -239,6 +263,17 @@
   3. `ci-check-teaching.py` 放宽"每步必有教学产物"的校验，增加"能力块必有产物"的新校验（按 M1-plan 的能力块声明表驱动）。
 - **DoD**：规则、M1-plan、校验脚本三者一致。
 - **挂载位置**：M1 Step 1 之前完成。
+- **状态**：部分完成（R2 登记延续项）
+- **证据**：
+  - commit SHA：未提交
+  - 改动文件：`docs/rules/learning-artifact-rules.md`、`artifacts/reviews/2026-04-22-design-audit-tasklist.md`
+  - 结构结果：
+    - `learning-artifact-rules §4.4`（"M1 起的合并规则（能力块合并）"）已落实：能力块定义、合并规则、触发条件三项清晰。
+    - §10 变更日志追加 v1.1 条目，说明新增 §4.4 的驱动来自 T-P2-2 / D-6 = C。
+  - 未完成分支（R2 明确登记，挂 M1 Step 1 前交付）：
+    - 行动项 3：`tools/ci-check-teaching.py` 放宽"每步必有教学产物"、新增"能力块必有产物"校验；当前脚本在 `L-1` / `L-ING-1` 层仍是每节点检查，与 §4.4 语义不矛盾（允许多节点合并为一份文档即可），但未显式读取 M*-plan 的能力块声明表做"能力块必有产物"断言。
+    - 行动项 2：M1a / M1b-plan §4 教学节点索引仍按原 F-* 单节点列出，尚未在 §4 注明"哪些 F-* 属同一能力块、可合并"；建议进入 M1 Step 1 时直接按 `M1a-plan §4` 改写。
+- **完成日期**：2026-04-22（R2；部分完成，延续项挂 M1 Step 1 前）
 
 ### T-P2-3：明确哪些 DoD 条款靠自动化、哪些靠人工
 
@@ -248,6 +283,16 @@
   2. 在 reviewer checklist 中新增"内容充分度"和"错误路径证据"两项显式检查点。
 - **DoD**：DoD 文件每条都有标签；reviewer checklist 有明确的强化项。
 - **挂载位置**：M1 前任意时刻。
+- **状态**：部分完成（R2 登记延续项）
+- **证据**：
+  - commit SHA：未提交
+  - 改动文件：`docs/quality/definition-of-done.md`、`artifacts/reviews/2026-04-22-design-audit-tasklist.md`
+  - 结构结果：
+    - `docs/quality/definition-of-done.md` §3 / §4 / §5 / §6.2 / §7 的所有 E-* / L-* / M-* / G-* 条款已打 `[auto]` / `[review]` / `[hybrid]` 标签；R2 补齐原本漏标的 `L-1`。
+    - §11 变更日志追加 v1.1 条目，说明驱动来自 T-P2-3 行动项 1；reviewer checklist 的"内容充分度 / 错误路径证据"强化项挂 `docs/quality/code-review-checklist.md`（C-4 后续波次）。
+  - 未完成分支（R2 明确登记，挂 C-4 首次交付时吸收）：
+    - 行动项 2：`docs/quality/code-review-checklist.md` 当前尚未交付；强化项内容暂以文字形式登记在本任务证据中，待 C-4 正式成稿时从此处提取并落为 checklist 条目。
+- **完成日期**：2026-04-22（R2；部分完成，延续项挂 C-4）
 
 ---
 
@@ -256,7 +301,6 @@
 | ID | 原建议 | 决定 | 原因 |
 |---|---|---|---|
 | N-1 | 把 warning 机械压到 ≤30 | 不采纳 | 与 D-7 一致，分类治优于阈值治 |
-| N-2 | 将 Auto-Research 和长程任务全部从 M1 -1 | 把 warning 机械压到 ≤30 | 不采纳 | 与 D-7 一致，分类治优于阈值治 |
 | N-2 | 将 Auto-Research 和长程任务全部从 M1 移除 | 推迟 | 先走 D-3 拆分/stretch 化，不一步到位地砍 |
 | N-3 | M0 增加教学闭环的合并规则 | 拒绝 | 与 D-6 一致，M0 不动 |
 
@@ -273,31 +317,28 @@
 
 ## 7. 待办追踪（结构化摘要）
 
-| ID | 标题 | 优先级 tep 1 补丁 |
+| ID | 标题 | 优先级 | 依赖决策 | 状态 | 挂载位置 |
+|---|---|---|---|---|---|
+| T-P0-1 | 统一 shell 基线 + doctor 复现 | P0 | D-1 | 已完成 | M0 Step 1 补丁 |
 | T-P0-2 | M0 冻结 swebench baseline 工件 | P0 | D-3, D-4 | 已完成 | M0 Step 8 |
 | T-P1-1a | SPEC v1.1 收口前置 ADR | P1 | D-2 | 已完成 | governance 补丁前置 |
 | T-P1-1b | SPEC 版本跟进到 v1.1 | P1 | D-2 | 已完成 | governance 补丁 |
-| T-P1-2 | 成本 KPI 双口径化 | P1 | D-4 | 已完成 | SPEC / PRD / M2-plan |
-| T-P1-3 | Kimi smoke gate 前置 | P1 | D-5 | 已完成 | M0 Step 5 + M1 §1 |
+| T-P1-2 | 成本 KPI 双口径化 | P1 | D-4 | 已完成 | SPEC v1.2 / PRD / M2-plan / learning-artifact-rules |
+| T-P1-3 | Kimi smoke gate 前置 | P1 | D-5 | 已完成 | M0 Step 5 + M1a §1 |
 | T-P1-4 | ci-check-spec warning 分类治 | P1 | D-7 | 已完成 | governance 补丁（4 批次） |
-| T-P1-5 | M1 范围收敛 | P1 | D-3 | 已完成 | M0 结束前 |
+| T-P1-5 | M1 范围收敛 | P1 | D-3 | 已完成 | M0 结束前（M1a/M1b 已拆 + 下游引用已同步） |
 | T-P2-1 | 接口冻结改为字段+职责粒度 | P2 | D-8 | 已完成 | M0 Step 11 前 |
-| T-P2-2 | 教学闭环 M1 起改能力块粒度 | P2 | D-6 | 已完成 | M1 Step 1 前 |
-| T-P2-3 | DoD 条款标注 auto/review/hybrid | P2 | — | 已完成 | M1 前任意时刻 |
+| T-P2-2 | 教学闭环 M1 起改能力块粒度 | P2 | D-6 | 部分完成 | 规则已落；`ci-check-teaching.py` 能力块校验登记为 M1 Step 1 前交付 |
+| T-P2-3 | DoD 条款标注 auto/review/hybrid | P2 | — | 部分完成 | DoD 标签全量落位；reviewer checklist 强化挂 C-4 后续波次 |
 
 ---
 
 ## 8. 下一步建议
 
-- 先对齐 §1 的决策点 D-1 / D-2 / D-3 / D-4 / D-7（这五条驱动 80% 的 P0/P1 任务）。
-- D-3 是最重的一项，建议作者实际估一下 M1a 最小价值闭环的工作量，再决定 B 或 C。
-- 决策闭合后，本文件顶部新增一条 changelog，并把对应 T-* 状态从 `待决策` 翻到 `待执行`。
-量，再决定 B 或 C。
-- 决策闭合后，本文件顶部新增一条 changelog，并把对应 T-* 状态从 `待决策` 翻到 `待执行`。
-的一项，建议作者实际估一下 M1a 最小价值闭环的工作量，再决定 B 或 C。
-- 决策闭合后，本文件顶部新增一条 changelog，并把对应 T-* 状态从 `待决策` 翻到 `待执行`。
-�� T-* 状态从 `待决策` 翻到 `待执行`。
-量，再决定 B 或 C。
-- 决策闭合后，本文件顶部新增一条 changelog，并把对应 T-* 状态从 `待决策` 翻到 `待执行`。
-的一项，建议作者实际估一下 M1a 最小价值闭环的工作量，再决定 B 或 C。
-- 决策闭合后，本文件顶部新增一条 changelog，并把对应 T-* 状态从 `待决策` 翻到 `待执行`。
+（R2 后的状态）
+
+- §1 所有决策 D-1 ~ D-8 均已闭合；§2–§4 的 T-* 任务中 P0 / P1 / P2-1 已完成，T-P2-2 / T-P2-3 登记为部分完成，延续项挂后续波次。
+- 未闭合项的接续动作：
+  - **T-P2-2**：`ci-check-teaching.py` 新增"能力块必有产物"校验（行动项 3），挂 M1 Step 1 前完成。
+  - **T-P2-3**：`docs/quality/code-review-checklist.md`（C-4）新增"内容充分度 / 错误路径证据"两项显式检查点，挂 C-4 首次交付时吸收。
+- 下一里程碑（M0 Step 2 起）动工时，若再出现状态虚报，优先修正本文件摘要表而不是新增 changelog。

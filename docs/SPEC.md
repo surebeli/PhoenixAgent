@@ -1,7 +1,7 @@
 # PhoenixAgent 模块 Spec 设计（SPEC）
 
-- 版本：v1.1
-- 日期：2026-04-19
+- 版本：v1.2
+- 日期：2026-04-22
 - 作者：dy
 - 关联：PRD.md（WHY / WHAT）、TRD.md（HOW 架构）、RnD-Analysis.md（风险 / 排期）
 - 目的：把 TRD 描述的八层架构落到**可直接编码**的接口契约、数据结构、关键流程与最小可运行骨架。本文件是大模型执行代码实现时的权威 Spec。
@@ -557,17 +557,36 @@ class LongHorizonMetrics:
     decision_stability: float
 
 @dataclass
+class CostBreakdown:
+    """双口径成本分解（SPEC v1.2 引入，对应 M2-KPI-3a / 3b）。
+
+    - execution_usd：Runtime 在被测任务上实际消耗（含 prompt + completion）；对应 M2-KPI-3a。
+    - evaluation_usd：Evaluator（如 Codex）对 diff / verify 输出打分时的消耗。
+    - research_usd：Auto-Research 的 Generator + 计划 + 反思产生的消耗（若本次跑不走 Auto-Research 则为 0.0）。
+    - total_usd：上述三项之和；保留用于向后兼容 BenchmarkReport.cost_usd 属性别名。
+    """
+    execution_usd: float
+    evaluation_usd: float
+    research_usd: float
+    total_usd: float
+
+@dataclass
 class BenchmarkReport:
     runtime: str
     model_profile: str
     family: str
     tasks_total: int
     resolved: int
-    cost_usd: float
+    cost: CostBreakdown                 # SPEC v1.2 起为权威字段
     tokens_in: int
     tokens_out: int
     per_task: list[tuple[str, VerifyResult]]
     generated_at: datetime
+
+    @property
+    def cost_usd(self) -> float:
+        """向后兼容别名，等价于 self.cost.total_usd。SPEC v1.2 引入，计划在下一个 Major 移除。"""
+        return self.cost.total_usd
 ```
 
 ### 7.2 Runner
@@ -595,7 +614,7 @@ class EvaluationRunner:
 
 - INV-EV-1：所有 BenchmarkReport 自动 ingest 到 wiki `namespace="evaluation"`。
 - INV-EV-2：Auto-Research 不得直接调用 Evaluator；必须走 `EvaluationRunner.run()`。
-- INV-EV-3：`BenchmarkReport.cost_usd` 必须与 MetricsSink 数据一致（交叉校验）。
+- INV-EV-3：`BenchmarkReport.cost` 的四个子字段（`execution_usd` / `evaluation_usd` / `research_usd` / `total_usd`）必须与 MetricsSink 数据一致，且 `total_usd == execution_usd + evaluation_usd + research_usd`（交叉校验）；`cost_usd` 作为 `total_usd` 的别名必须与之自洽。
 
 ---
 
@@ -929,3 +948,4 @@ PhoenixAgent/
 |---|---|---|---|
 | v1.0 | 2026-04-18 | 首版；锁定八层接口契约、HarnessFlags s01~s12 清单与 default、5 步验证链、PhoenixContext / ToolSpec / ToolCall 骨架。 | — |
 | v1.1 | 2026-04-19 | §5.1 `HarnessFlags` 装饰器从 `@dataclass` 改为 `@dataclass(frozen=True)`，对齐 `harness-flags-policy` HF-IMPL-1；Minor 向后兼容（字段集 / 默认值 / 类型不变，仅强化不可变语义）。 | ADR-0001 |
+| v1.2 | 2026-04-22 | §7.1 新增 `CostBreakdown`（`execution_usd` / `evaluation_usd` / `research_usd` / `total_usd`）；`BenchmarkReport.cost_usd: float` 改为 `cost: CostBreakdown` + `cost_usd` property 别名；`INV-EV-3` 改为对 `cost` 四子字段与 MetricsSink 交叉校验。Minor 向后兼容（字段新增 + 别名保留），对应 `M2-KPI-3a / 3b` 双口径成本的审计落地。 | ADR-0003 |

@@ -82,7 +82,7 @@ PhoenixAgent 项目的特殊性决定 DoD 不能只看"代码可运行"：
 
 ### 4.1 通用学习 DoD（除显式标注"无新学习点"外，所有 Step 必须满足）
 
-- **L-1 F-* 产出**：Step 定义的所有 `F-<idx>-<slug>.md` 文件存在，frontmatter 必填字段齐备（见 `learning-artifact-rules` §3）。
+- **[auto] L-1 F-* 产出**：Step 定义的所有 `F-<idx>-<slug>.md` 文件存在，frontmatter 必填字段齐备（见 `learning-artifact-rules` §3）。
 - **[review] L-2 字数区间**：每个 F-* 节点字数在 [400, 3000] 内（L-ART-7）。
 - **[review] L-3 必答问题**：Step "内嵌学习" 段落列出的"要回答"问题，在 F-* 节点正文有直接回应（不可"回避"或"留待后续"）。
 - **[review] L-4 资料可追**：必读资料以 URL / 文件路径 / 章节号形式出现在 F-* 的 `## 参考` 段。
@@ -230,3 +230,4 @@ CI 与 reviewer 有义务识别并阻塞上述情况。
 | 版本 | 日期 | 变更 |
 |---|---|---|
 | v1.0 | 2026-04-18 | 首版；定义三达标 DoD 模型，覆盖 Step / Milestone / Tool / Runtime / Model / Memory 五维度。 |
+| v1.1 | 2026-04-22 | 全量条款补齐 `[auto]` / `[review]` / `[hybrid]` 标签（对应 T-P2-3 行动项 1）；`L-1` 补 `[auto]` 标签。reviewer checklist 的"内容充分度 / 错误路径证据"强化项挂 `docs/quality/code-review-checklist.md`（C-4 后续波次）。 |

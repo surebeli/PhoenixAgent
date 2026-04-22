@@ -1,34 +1,34 @@
-# Milestone 1 — 执行顺序计划（Step-based，工程 × 学习同步）
+# Milestone 1a — 自研 Runtime 最小价值闭环（Step-based，工程 × 学习同步）
 
-- 版本：v1.0（2026-04-18）
+- 版本：v1.1（2026-04-22；按 T-P1-5 从原 M1-plan.md 拆出 M1a 子里程碑）
 - 作者：dy
 - 上位文档：PRD.md §10、TRD.md §4 / §6 / §7 / §8、RnD-Analysis.md §6.2、SPEC.md §5 / §6 / §7 / §8、M0-plan.md
-- 总目标：实现 `PhoenixCoreRuntime`（最小 ReAct + Plan + Compression + 验证链）+ 编程插件 + MemoryBackend 完整闭环 + Evaluation Runner 全量 + Auto-Research v1；在 SWE-bench Verified 子集上 Resolved Rate ≥ "Claude Agent SDK + Codex" 基准的 85%，长程任务完成率 ≥ 80%。
+- 总目标：实现 `PhoenixCoreRuntime`（最小 ReAct + Plan + Compression + 验证链）+ 编程插件四件套 + AK-llm-wiki 最小闭环 + Evaluation Runner 基础能力；在 SWE-bench Verified 子集上 Resolved Rate 相对 M0 冻结基线 ≥ 0.85，并对 `kimi-worker` smoke 建立滚动成功率 gate。本子里程碑的北极星是**证明"自研 Core + 编程插件 + subset evaluation"可稳定运行**；长程任务全量、Auto-Research 多轮迭代、Memory 七动词全量下沉到 M1b-plan.md。
 
 ---
 
 ## 0. 启动前提
 
 - M0-plan.md 的 Step 12 已验收通过，DoD-1~DoD-7 全部成立。
-- `AgentRuntime` / `MemoryBackend` / `ToolSpec` + `PluginRegistry` 三个硬接口已在 SPEC v1.1 冻结；进入 M1 后若需变更，走"SPEC 先行"流程。
+- `AgentRuntime` / `MemoryBackend` / `ToolSpec` + `PluginRegistry` 三个硬接口在 SPEC v1.1 进入 **soft-freeze**（见 `docs/rules/spec-change-policy.md` `S-FREEZE-0`）；M1a Step 1–6 允许 Patch 级接口调整，Step 7 起进入 hard-freeze。
 - 学习节点 `F-01 ~ F-06 + F-mem-1/2 + F-05a/b + F-model-1`（M0 产出）已 `wiki-ingest` 并可被 `wiki-query` 召回。
-- 启动冻结版本：`PRD v1.0` / `TRD v1.0` / `SPEC v1.1`。
+- 启动冻结版本：`PRD v1.0` / `TRD v1.0` / `SPEC v1.2`（CostBreakdown 双口径落地后版本）。
 
 ---
 
 ## 1. 完成定义（DoD，状态驱动）
 
+M1a 的硬 DoD 仅覆盖"自研 Core 可运行 + 编程插件 + subset evaluation + Memory 基础动词 + kimi smoke gate"；长程任务 / Auto-Research 3+ 轮 / Memory 七动词全量属 M1b，见 `M1b-plan.md §1`。
+
 - **DoD-M1-1**：`phoenix run --task "..." --runtime=self --model=codex-base` 在 M0 的 echo 任务上返回 `status="success"`；`--runtime=self --model=kimi-worker` 同样成功。
-- **DoD-M1-1a**：最近 20 次滚动运行中，`--runtime=self --model=kimi-worker` 成功率 ≥ 95%；若未达标，M1 不得关闭。
-- **DoD-M1-2**：12 层 Harness 中 s01 / s02 / s03 / s04 / s06 / s07 / s12 在自研 Core 中可运行；每层可通过 `HarnessFlags` 开关（SPEC v1.1 §5.1）。
+- **DoD-M1-1a**：最近 20 次滚动运行中，`--runtime=self --model=kimi-worker` 成功率 ≥ 95%；若未达标，M1a 不得关闭（T-P1-3 Kimi smoke gate）。
+- **DoD-M1-2**：12 层 Harness 中 s01 / s02 / s03 / s04 / s06 / s07 / s12 在自研 Core 中可运行；每层可通过 `HarnessFlags` 开关（SPEC v1.2 §5.1）。
 - **DoD-M1-3**：5 步验证链（`validateInput → PreToolUse Hook → checkPermissions → executeTool → mapToolResultToAPI`）在 `PhoenixCoreRuntime.run_task` 内硬编码强制执行。
 - **DoD-M1-4**：编程插件 `coding.git_worktree` / `coding.multi_file_edit` / `coding.test_runner` / `coding.harness_validator` 四个工具上线。
-- **DoD-M1-5**：`MemoryBackend` 七动词（ingest / query / digest / import_bulk / graph / lint / tier）在 `AKLLMWikiBackend` 全部可用。
+- **DoD-M1-5a**：`MemoryBackend` 基础四动词（`ingest` / `query` / `digest` / `tier`）在 `AKLLMWikiBackend` 已可用；`import_bulk` / `graph` / `lint` 允许 M1a 期间以最小 stub 形式占位，`M1b` 再补齐。
 - **DoD-M1-6**：`phoenix eval --benchmark=swe-bench-verified --subset=50 --runtime=self --model=codex-base` 的 Resolved Rate 相对 `artifacts/M0/baseline-swebench.json` 中冻结基线的比例 ≥ 0.85。
-- **DoD-M1-7**：长程任务（SWE-EVO / SlopCodeBench 任一 + PhoenixAgent 自定义 ≥ 5 个）上的完成率 ≥ 80%。
-- **DoD-M1-8**：Auto-Research 完成 ≥ 3 轮有效迭代；至少 2 项 Kept 变更在 wiki 留档（含 `experiment-report.md`）。
-- **DoD-M1-9**：学习节点 `F-07 ~ F-22`（见 §4 索引）全部 `wiki-ingest` 并可召回。
-- **DoD-M1-10**：M1 retrospective + interface-backlog 写入 wiki；进入 M2 前三个硬接口再次冻结。
+- **DoD-M1-9a**：学习节点 `F-07 ~ F-15`（M1a §4 索引）全部 `wiki-ingest` 并可召回；M1 起允许按"能力块"合并（`docs/rules/learning-artifact-rules.md` §4.4）。
+- **DoD-M1-10a**：M1a retrospective + interface-backlog 写入 wiki；进入 M1b 前三个硬接口进入 hard-freeze。
 
 ---
 

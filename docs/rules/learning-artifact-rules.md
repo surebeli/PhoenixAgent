@@ -1,6 +1,6 @@
 # 学习 Artifact 规则（Learning Artifact Rules）
 
-- 版本：v1.0（2026-04-18）
+- 版本：v1.1（2026-04-22）
 - 作者：dy
 - 适用范围：`docs/teaching/**` 下所有教学资产（`F-*`、`M-*`、`experiment-report.md` 等）与其在 AK-llm-wiki 的 ingest 记录。
 - 上位依据：PRD §8（教学交付物要求）、TRD §4.8（D-TL TeachingEmitter）、SPEC v1.1 §9（TeachingEmitter 接口）、`docs/rules/spec-change-policy.md`。
@@ -125,10 +125,17 @@ subset: 20
 seed: 42
 result: kept                       # kept / discarded / inconclusive
 significance: 0.032                # p-value；inconclusive 时为 null
+cost:                              # SPEC v1.2 §7.1 CostBreakdown，experiment-report 强制双曲线
+  execution_usd: 3.42
+  evaluation_usd: 1.07
+  research_usd: 0.85
+  total_usd: 5.34
 ingested: true
 ingested_at: ...
 ---
 ```
+
+- **L-ART-9（SPEC v1.2 起）**：`type=experiment` 的报告 frontmatter 必须包含 `cost` 字段，四子字段齐备且 `total_usd == execution_usd + evaluation_usd + research_usd`（对应 `SPEC v1.2 INV-EV-3`）。历史 experiment-report（SPEC < v1.2 撰写）可以缺省，但新 report 必须双曲线。对应 `M2-KPI-3a / 3b` 的可审计性；CI 由后续 `ci-check-teaching.py` 批次吸收。
 
 ### 3.4 字段硬约束
 
@@ -333,3 +340,4 @@ CI 脚本交付时需实现至少以下检查（按优先级）：
 | 版本 | 日期 | 变更 |
 |---|---|---|
 | v1.0 | 2026-04-18 | 首版；对齐 M0/M1/M2 plan 已隐含的 F-* / M-* 约定。 |
+| v1.1 | 2026-04-22 | §4.4 新增"M1 起能力块合并规则"（对应 T-P2-2 / D-6 = C）；§3.3 experiment-report frontmatter 新增 `cost: CostBreakdown` 四子字段要求与 `L-ART-9`（对应 T-P1-2 / ADR-0003，SPEC v1.2 §7.1）。 |
