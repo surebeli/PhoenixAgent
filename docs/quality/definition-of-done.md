@@ -39,42 +39,42 @@ PhoenixAgent 项目的特殊性决定 DoD 不能只看"代码可运行"：
 
 ### 3.1 通用工程 DoD（所有 Step 必须满足）
 
-- **E-1 产物齐备**：Step 定义的所有"产物"文件 / 脚本 / 配置 / 接口存在于 git，且被对应的索引（`models.toml` / `PluginRegistry` / SQLite schema 等）注册。
-- **E-2 可运行**：Step 定义的验证命令（`phoenix run` / `phoenix eval` / `phoenix-doctor.sh` 等）能无人工干预地运行到终态，exit code 符合预期。
-- **E-3 验证链完整**：若本步引入新 Tool 或新 Runtime，`validateInput → PreToolUse Hook → checkPermissions → executeTool → mapToolResultToAPI` 5 步验证链全过（M1 Step 4 起硬性要求）。
-- **E-4 可观测**：本步引入的任何新行为有日志 / metric / JSONL 轨迹记录，且能与 `logs/` 下既有格式兼容。
-- **E-5 错误路径**：本步引入的功能有至少一条"预期失败"的用例并能被验证（拒绝、超时、回滚、重试）。不是测试覆盖率要求，是"失败可解释"要求。
-- **E-6 不破坏既有**：运行 `phoenix-doctor.sh --strict` + 前序 Step 的验证命令子集（"烟雾测试"），全部通过；不引入 regression。
-- **E-7 幂等**：本步若涉及文件写、DB 写、wiki ingest，重复执行同一命令不产生重复状态或错误。特别是 `ingest` / `tier` / `migration` 脚本。
+- **[auto] E-1 产物齐备**：Step 定义的所有"产物"文件 / 脚本 / 配置 / 接口存在于 git，且被对应的索引（`models.toml` / `PluginRegistry` / SQLite schema 等）注册。
+- **[review] E-2 可运行**：Step 定义的验证命令（`phoenix run` / `phoenix eval` / `phoenix-doctor.sh` 等）能无人工干预地运行到终态，exit code 符合预期。
+- **[review] E-3 验证链完整**：若本步引入新 Tool 或新 Runtime，`validateInput → PreToolUse Hook → checkPermissions → executeTool → mapToolResultToAPI` 5 步验证链全过（M1 Step 4 起硬性要求）。
+- **[review] E-4 可观测**：本步引入的任何新行为有日志 / metric / JSONL 轨迹记录，且能与 `logs/` 下既有格式兼容。
+- **[auto] E-5 错误路径**：本步引入的功能有至少一条"预期失败"的用例并能被验证（拒绝、超时、回滚、重试）。不是测试覆盖率要求，是"失败可解释"要求。
+- **[auto] E-6 不破坏既有**：运行 `phoenix-doctor.sh --strict` + 前序 Step 的验证命令子集（"烟雾测试"），全部通过；不引入 regression。
+- **[auto] E-7 幂等**：本步若涉及文件写、DB 写、wiki ingest，重复执行同一命令不产生重复状态或错误。特别是 `ingest` / `tier` / `migration` 脚本。
 
 ### 3.2 引入新 Tool 时的工程 DoD
 
 当 Step 产出一个新的 `ToolSpec` 实现时，附加：
 
-- **E-T1** 有 JSON Schema 描述输入 / 输出。
-- **E-T2** 有 `requires_worktree` / `dangerous` 标志显式设定（非默认）。
-- **E-T3** 在 `permissions.toml` 默认规则中出现（至少一条 allow / ask / deny）。
-- **E-T4** 至少 1 条 Hook 场景案例（即使是"无动作通过"）写入 `tools/hooks/` 或测试 fixture。
+- **[review] E-T1** 有 JSON Schema 描述输入 / 输出。
+- **[review] E-T2** 有 `requires_worktree` / `dangerous` 标志显式设定（非默认）。
+- **[review] E-T3** 在 `permissions.toml` 默认规则中出现（至少一条 allow / ask / deny）。
+- **[auto] E-T4** 至少 1 条 Hook 场景案例（即使是"无动作通过"）写入 `tools/hooks/` 或测试 fixture。
 
 ### 3.3 引入新 Runtime 时的工程 DoD
 
-- **E-R1** 实现 SPEC v1.0 §3 `AgentRuntime` 全部方法。
-- **E-R2** 至少 1 个相同任务可在 `--runtime=<new>` 与既有 Runtime 上产出可对比结果。
-- **E-R3** `Runtime.capabilities()` 显式登记能力差异（extended_thinking / parallel_tool_use 等）。
-- **E-R4** 记忆热切换回归（M2 DoD-M2-6 起强制）。
+- **[review] E-R1** 实现 SPEC v1.1 §3 `AgentRuntime` 全部方法。
+- **[review] E-R2** 至少 1 个相同任务可在 `--runtime=<new>` 与既有 Runtime 上产出可对比结果。
+- **[review] E-R3** `Runtime.capabilities()` 显式登记能力差异（extended_thinking / parallel_tool_use 等）。
+- **[review] E-R4** 记忆热切换回归（M2 DoD-M2-6 起强制）。
 
 ### 3.4 引入新 Model 时的工程 DoD
 
-- **E-M1** `ModelProfile` 新增，`phoenix-doctor.sh` 对应段 PASS。
-- **E-M2** 至少 1 次 smoke run（20 次最小任务，成功率 ≥ 95%）。
-- **E-M3** 国际路由 / 代理路径、API Key 管理与 `keys.env.template` 对齐。
-- **E-M4** 在基线 benchmark subset 上产出至少一份 report（即使是差的）。
+- **[review] E-M1** `ModelProfile` 新增，`phoenix-doctor.sh` 对应段 PASS。
+- **[review] E-M2** 至少 1 次 smoke run（20 次最小任务，成功率 ≥ 95%）。
+- **[review] E-M3** 国际路由 / 代理路径、API Key 管理与 `keys.env.template` 对齐。
+- **[review] E-M4** 在基线 benchmark subset 上产出至少一份 report（即使是差的）。
 
 ### 3.5 引入新 Memory 操作 / 新 digest 规则时的工程 DoD
 
-- **E-MM1** 不变量 INV-MM-1/2/3 仍然成立（本地回归）。
-- **E-MM2** 与现有 namespace 隔离正确；跨 namespace 不泄漏。
-- **E-MM3** `lint` / `tier` 在本次改动后仍可运行至终态。
+- **[review] E-MM1** 不变量 INV-MM-1/2/3 仍然成立（本地回归）。
+- **[review] E-MM2** 与现有 namespace 隔离正确；跨 namespace 不泄漏。
+- **[auto] E-MM3** `lint` / `tier` 在本次改动后仍可运行至终态。
 
 ---
 
@@ -83,28 +83,28 @@ PhoenixAgent 项目的特殊性决定 DoD 不能只看"代码可运行"：
 ### 4.1 通用学习 DoD（除显式标注"无新学习点"外，所有 Step 必须满足）
 
 - **L-1 F-* 产出**：Step 定义的所有 `F-<idx>-<slug>.md` 文件存在，frontmatter 必填字段齐备（见 `learning-artifact-rules` §3）。
-- **L-2 字数区间**：每个 F-* 节点字数在 [400, 3000] 内（L-ART-7）。
-- **L-3 必答问题**：Step "内嵌学习" 段落列出的"要回答"问题，在 F-* 节点正文有直接回应（不可"回避"或"留待后续"）。
-- **L-4 资料可追**：必读资料以 URL / 文件路径 / 章节号形式出现在 F-* 的 `## 参考` 段。
-- **L-5 与 SPEC 对齐**：frontmatter `spec_version` 与当前 SPEC 一致；`related_spec` / `related_inv` 引用真实存在。
-- **L-6 Ingest 完成**：`phoenix memory ingest` 已执行，`.ingested.json` 已更新，CI 通过（L-ING-4）。
-- **L-7 可召回**：`phoenix memory query <关键问题>` 能召回本 F-* 节点（基本闭环测试，至少 1 个代表性 query 命中）。
+- **[review] L-2 字数区间**：每个 F-* 节点字数在 [400, 3000] 内（L-ART-7）。
+- **[review] L-3 必答问题**：Step "内嵌学习" 段落列出的"要回答"问题，在 F-* 节点正文有直接回应（不可"回避"或"留待后续"）。
+- **[review] L-4 资料可追**：必读资料以 URL / 文件路径 / 章节号形式出现在 F-* 的 `## 参考` 段。
+- **[review] L-5 与 SPEC 对齐**：frontmatter `spec_version` 与当前 SPEC 一致；`related_spec` / `related_inv` 引用真实存在。
+- **[auto] L-6 Ingest 完成**：`phoenix memory ingest` 已执行，`.ingested.json` 已更新，CI 通过（L-ING-4）。
+- **[auto] L-7 可召回**：`phoenix memory query <关键问题>` 能召回本 F-* 节点（基本闭环测试，至少 1 个代表性 query 命中）。
 
 ### 4.2 纯机械 Step 的豁免
 
 若 Step 显式标注"无新学习点"（例如 M0-plan 中某些辅助配置步骤），则 L-1 ~ L-7 豁免，但必须：
 
-- **L-0** 在 Step 的"内嵌学习"段落显式写"本步无新学习点，复用 Step X 的 F-Y"，不得留空。
-- **L-1'** `related_nodes` 语义明确，引用的 F-Y 为 `tier=active`。
+- **[review] L-0** 在 Step 的"内嵌学习"段落显式写"本步无新学习点，复用 Step X 的 F-Y"，不得留空。
+- **[review] L-1'** `related_nodes` 语义明确，引用的 F-Y 为 `tier=active`。
 
 ### 4.3 Milestone 结尾的学习 DoD
 
 每个 Milestone retrospective（M0 Step 12 / M1 Step 14 / M2 Step 12 对应位置）额外：
 
-- **L-M1** Milestone 内所有 F-* 节点 `ingested=true` 且 `ingested_at` ≥ 文件 mtime。
-- **L-M2** 对应的 `M-<slug>.md` Milestone Artifact 至少 1 份（walkthrough / playbook / report 任选），ingest 完成。
-- **L-M3** 上一个 Milestone 的节点降 tier 完成（learning-artifact-rules §6.2）。
-- **L-M4** 元反思节点 `F-<idx>-milestone-meta-reflection.md` 存在且直接回答"若重写会改哪 3 件事"（与"哪些结论被推翻"在 M2 起）。
+- **[review] L-M1** Milestone 内所有 F-* 节点 `ingested=true` 且 `ingested_at` ≥ 文件 mtime。
+- **[review] L-M2** 对应的 `M-<slug>.md` Milestone Artifact 至少 1 份（walkthrough / playbook / report 任选），ingest 完成。
+- **[review] L-M3** 上一个 Milestone 的节点降 tier 完成（learning-artifact-rules §6.2）。
+- **[review] L-M4** 元反思节点 `F-<idx>-milestone-meta-reflection.md` 存在且直接回答"若重写会改哪 3 件事"（与"哪些结论被推翻"在 M2 起）。
 
 ---
 
@@ -112,23 +112,23 @@ PhoenixAgent 项目的特殊性决定 DoD 不能只看"代码可运行"：
 
 ### 5.1 通用记忆 DoD
 
-- **M-1 INV-MM-1 成立**：跨 namespace digest 不重复（每个 Step 改动 Memory 后自检）。
-- **M-2 INV-MM-2 成立**：subagent digest 不污染主 agent（若本 Step 涉及 subagent）。
-- **M-3 INV-MM-3 成立**：新 ingest 必定更新 digest（ingest 后 query 可召回证实）。
-- **M-4 namespace 正确**：本步新增的 ingest 落在正确 namespace；本文件 §7 给出映射表。
-- **M-5 slug 唯一**：本步新增节点的 slug 在 `.ingested.json` 中不与既有条目冲突。
-- **M-6 tier 与用途匹配**：`active` tier 的节点确实是"当前或近期 Milestone 主内容"，不滥用。
+- **[review] M-1 INV-MM-1 成立**：跨 namespace digest 不重复（每个 Step 改动 Memory 后自检）。
+- **[review] M-2 INV-MM-2 成立**：subagent digest 不污染主 agent（若本 Step 涉及 subagent）。
+- **[review] M-3 INV-MM-3 成立**：新 ingest 必定更新 digest（ingest 后 query 可召回证实）。
+- **[review] M-4 namespace 正确**：本步新增的 ingest 落在正确 namespace；本文件 §7 给出映射表。
+- **[review] M-5 slug 唯一**：本步新增节点的 slug 在 `.ingested.json` 中不与既有条目冲突。
+- **[hybrid] M-6 tier 与用途匹配**：`active` tier 的节点确实是"当前或近期 Milestone 主内容"，不滥用。
 
 ### 5.2 引入 Evaluator / Auto-Research 产出时的记忆 DoD
 
-- **M-E1** `experiment-report.md` 的 frontmatter `spec_version` 与开跑时 SPEC 一致，不跨 Major。
-- **M-E2** Kept 变更必须有后续 F-* 节点承接（否则该变更事实上脱离项目知识库）。
-- **M-E3** Discarded 变更仍然 ingest（失败是一等信息）。
+- **[review] M-E1** `experiment-report.md` 的 frontmatter `spec_version` 与开跑时 SPEC 一致，不跨 Major。
+- **[review] M-E2** Kept 变更必须有后续 F-* 节点承接（否则该变更事实上脱离项目知识库）。
+- **[review] M-E3** Discarded 变更仍然 ingest（失败是一等信息）。
 
 ### 5.3 Runtime / Model 热切换时的记忆 DoD（M2 起）
 
-- **M-H1** 切换点前后的 Memory 不变量回归 100% 通过（M2 Step 8）。
-- **M-H2** `digest_version` 字段存在且在冲突时走合并策略（R-MM-2 缓解）。
+- **[review] M-H1** 切换点前后的 Memory 不变量回归 100% 通过（M2 Step 8）。
+- **[review] M-H2** `digest_version` 字段存在且在冲突时走合并策略（R-MM-2 缓解）。
 
 ---
 
@@ -149,11 +149,11 @@ PhoenixAgent 项目的特殊性决定 DoD 不能只看"代码可运行"：
 
 ### 6.2 Step 级门控
 
-- **G-1** 工程达标：产出命令输出 / CI 绿灯证据。
-- **G-2** 学习达标：`.ingested.json` diff + 至少一次召回证据。
-- **G-3** 记忆达标：`phoenix memory lint` 运行输出无致命错误。
-- **G-4** 作者自评：在 Step 尾部的"进入下一步条件"下打勾确认。
-- **G-5**（可选，协作场景）PR reviewer 签字。
+- **[auto] G-1** 工程达标：产出命令输出 / CI 绿灯证据。
+- **[review] G-2** 学习达标：`.ingested.json` diff + 至少一次召回证据。
+- **[auto] G-3** 记忆达标：`phoenix memory lint` 运行输出无致命错误。
+- **[review] G-4** 作者自评：在 Step 尾部的"进入下一步条件"下打勾确认。
+- **[review] G-5**（可选，协作场景）PR reviewer 签字。
 
 ### 6.3 Milestone 级门控
 

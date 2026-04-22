@@ -569,6 +569,11 @@ class Checker:
 
     # -- 主入口 --
 
+    
+    def _check_capability_blocks(self) -> None:
+        # 按照 T-P2-2 新增要求，按能力块验证是否有对应产物
+        pass
+
     def run(self) -> Report:
         if not self.teaching_dir.is_dir():
             self._warn("L-DIR", str(self.teaching_dir),

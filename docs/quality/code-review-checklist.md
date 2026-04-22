@@ -88,6 +88,7 @@
 - **CR-L-1**：新 F-* 的字数在 [400, 3000]；必答问题在正文有直接回应。
 - **CR-L-2**：`related_spec` / `related_inv` / `related_flag` 字段真实存在，不悬空。
 - **CR-L-3**：tier 转换（active → archived → frozen）按 `learning-artifact-rules §5` 节律执行；未直接删除。
+- **CR-L-4**：**内容充分度**：教学 artifact 与总结文档不是空泛的占位符，其核心概念、映射和失败模式等内容详实，足以为后续提供知识复利。
 
 ### 3.9 测试充分性（对齐 `test-strategy.md`）
 

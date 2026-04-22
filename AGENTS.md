@@ -88,6 +88,7 @@ py -3 tools/ci-check-milestone-dod.py  # M*-plan DoD 闭环（动到 milestones/
 ## 7. 平台与工具约定
 
 - **OS**：Windows 11；shell 用 bash（不是 cmd / PowerShell）。
+- **Shell 基线**：M0 / doctor / 环境归档的官方冻结基线是 Windows `Git Bash (MSYS/MINGW)`；其他 bash 仅视为兼容运行环境，不作为 Step 1 对账基线。
 - **Python**：调用一律 `py -3 <script>`，不是 `python <script>`。
 - **Git**：仓库根 `F:\workspace\ai\PhoenixAgent`；UTF-8 文件；CRLF 由 git 自动处理。
 - **路径**：脚本内用 `pathlib.Path`；命令行参数用绝对路径或相对 repo 根。

@@ -27,7 +27,7 @@
 - **DoD-4**：SWE-bench Verified 官方 Docker harness 本地跑通 ≥ 1 个 instance 的完整流程（patch → 容器内测试 → 报告）。
 - **DoD-5**：学习 artifact `F-01 ~ F-06` 全部入库（内容见 §3 各 Step 内嵌学习小节）。
 - **DoD-6**：工程 artifact `M-runtime-abstraction` / `M-evaluation-setup` / `M-walkthrough` 三份汇总 artifact 入库，`docs/teaching/M0/` 存在 `.ingested.json` marker。
-- **DoD-7**：三个硬接口（`AgentRuntime` / `MemoryBackend` / `ToolSpec` + `PluginRegistry`）在 SPEC v1.0 的签名下稳定冻结，进入 M1 前无再次破坏性变更。
+- **DoD-7**：三个硬接口（`AgentRuntime` / `MemoryBackend` / `ToolSpec` + `PluginRegistry`）在 SPEC v1.1 的签名下稳定冻结，进入 M1 前无再次破坏性变更。
 
 ---
 
@@ -133,7 +133,7 @@ Step 12 (interface freeze checkpoint → 进入 M1)
 **工程任务**
 - `pip install claude-agent-sdk`；编写一段极简 demo：发一个 `"hello phoenix"` 任务，走 Claude Agent SDK 完整 ReAct 一圈；打印 assistant 文本 + tool_use 轨迹（即使此 demo 没有工具，也观察 stop_reason）。
 - 同一个任务切到 Codex API（OpenAI function calling）跑一次；记录两次 tokens / 耗时，作为 M2 成本对比原点写入 `docs/milestones/M0-cost-baseline.md`。
-- 日志输出到 `logs/<session_id>.jsonl`（SPEC v1.0 §13.1）。
+- 日志输出到 `logs/<session_id>.jsonl`（SPEC v1.1 §13.1）。
 
 **内嵌学习（产出 F-02 + F-05a）**
 - 必读：
@@ -161,10 +161,10 @@ Step 12 (interface freeze checkpoint → 进入 M1)
 ### Step 4 — AgentRuntime 抽象接口 · Strategy/Factory 模式落地 〔量级：M〕
 
 **工程任务**
-- 按 SPEC v1.0 §2.1 落 `src/phoenix/runtime/base.py`：`AgentRuntime` Protocol + 相关 dataclass（`RuntimeConfig`、`SessionHandle`）。
+- 按 SPEC v1.1 §2.1 落 `src/phoenix/runtime/base.py`：`AgentRuntime` Protocol + 相关 dataclass（`RuntimeConfig`、`SessionHandle`）。
 - 落 `src/phoenix/runtime/claude.py` 的最小可运行实现（把 Step 3 的 smoketest 收进来）。
 - 落 `src/phoenix/runtime/core.py` 与 `openai.py` 的 stub（仅签名，`raise NotImplementedError`）。
-- 落 `RUNTIME_REGISTRY` + `make_runtime`（SPEC v1.0 §2.3）。
+- 落 `RUNTIME_REGISTRY` + `make_runtime`（SPEC v1.1 §2.3）。
 
 **内嵌学习（产出 F-05b）**
 - 必读：
@@ -192,10 +192,12 @@ Step 12 (interface freeze checkpoint → 进入 M1)
 ### Step 5 — Model Layer · 多 Provider 路由与合规 〔量级：M〕
 
 **工程任务**
-- 创建 `~/.config/phoenix/models.toml`（按 SPEC v1.0 §4.1 三个 profile：`codex-base`、`kimi-worker`、`local-ollama`）。
+- 创建 `~/.config/phoenix/models.toml`（按 SPEC v1.1 §4.1 三个 profile：`codex-base`、`kimi-worker`、`local-ollama`）。
 - 落 `src/phoenix/model/client.py`：`LLMClient` Protocol + `ChatRequest/ChatResponse` dataclass；最小路由实现可基于 LiteLLM 或直调 SDK。
 - `scripts/smoketest-model.py`：对 `codex-base` 与 `kimi-worker` 分别发一条 `chat`，打印 tokens / 耗时。
 - 若 Kimi 报 `only available for Coding Agents`，在脚本里加 `User-Agent: Claude-Code`，记录能否穿透。
+- 增加 `kimi-worker` whoami 级探针：记录 HTTP 码、延迟、直连/伪装 `User-Agent` 路径与结论到 `artifacts/M0/kimi-smoke.json`；失败不阻断 Step 5，但必须留档。
+- 若直连失败，优先登记后续 HTTP 代理/兼容路由回退路径，不在本 Step 内强行实现。
 
 **内嵌学习（产出 F-model-1）**
 - 必读：
@@ -212,17 +214,19 @@ Step 12 (interface freeze checkpoint → 进入 M1)
 - `src/phoenix/model/client.py`（Protocol + 最小 adapter stub）
 - `src/phoenix/model/profiles.py`（加载 models.toml）
 - `scripts/smoketest-model.py`
+- `artifacts/M0/kimi-smoke.json`
 - `docs/teaching/M0/foundations/F-model-1-routing-and-compliance.md`
 
 **进入下一步条件**
 - 两个 profile 至少有一个成功拿到响应；失败 profile 在 `F-model-1` 中记录诊断与后续补救时机。
+- `artifacts/M0/kimi-smoke.json` 已产出；若 `kimi-worker` 失败，失败原因与回退路径已在工件和 `F-model-1` 中登记。
 
 ---
 
 ### Step 6 — Plugin Registry + dummy 工具 · MCP 协议内化 〔量级：M〕
 
 **工程任务**
-- 落 `src/phoenix/plugins/registry.py`（SPEC v1.0 §3.2）的最小实现：`register` / `list` / `tool_specs` / `execute`。
+- 落 `src/phoenix/plugins/registry.py`（SPEC v1.1 §3.2）的最小实现：`register` / `list` / `tool_specs` / `execute`。
 - 实现一个 dummy plugin：`echo`（`ToolSpec: echo.say`，`side_effect="none"`），手动在 `ClaudeAgentSDKRuntime` 里注册并触发。
 - 落 `src/phoenix/cli.py` 的最小 `phoenix run --task ... --runtime=claude --model=<profile>` 命令。
 
@@ -250,15 +254,15 @@ Step 12 (interface freeze checkpoint → 进入 M1)
 ### Step 7 — Memory Layer adapter · ingest/query/digest 闭环 〔量级：M〕
 
 **工程任务**
-- 落 `src/phoenix/memory/backend.py`（SPEC v1.0 §6.1 Protocol + dataclass）。
+- 落 `src/phoenix/memory/backend.py`（SPEC v1.1 §6.1 Protocol + dataclass）。
 - 落 `src/phoenix/memory/akllmwiki.py`：subprocess 调用 `wiki` 命令的 adapter；只完成 `ingest` / `query` / `digest` 三个方法的最小可用版本；`import_bulk / graph / lint / tier` 留 stub。
-- 在 `ClaudeAgentSDKRuntime.run_task` 末尾调用 `ctx.memory.digest(Episode(...))`（SPEC v1.0 §6.4 INV-MM-1）。
+- 在 `ClaudeAgentSDKRuntime.run_task` 末尾调用 `ctx.memory.digest(Episode(...))`（SPEC v1.1 §6.4 INV-MM-1）。
 - 跑一次 Step 6 的 echo 任务，`wiki-query "echo"` 验证 digest 落盘。
 
 **内嵌学习（产出 F-mem-2）**
 - 必读：
   - AK-llm-wiki README 的"digest 规则"段落。
-  - SPEC v1.0 §6.3 Digest Rules 的本项目约定。
+  - SPEC v1.1 §6.3 Digest Rules 的本项目约定。
 - 要回答：
   - `digest` 与 `ingest` 为什么是两个动词？（输入来源与触发时机差异）
   - 为什么 `digest` 必须按 `namespace` 隔离？对比插件污染场景。
@@ -284,6 +288,7 @@ Step 12 (interface freeze checkpoint → 进入 M1)
 - `pip install swebench`；`docker pull swebench/sweb.eval.x86_64:latest`（或 epoch.ai 预构建镜像）。
 - 选 Verified 中最小体量的一个 instance，准备一份"空 patch"或人工正确 patch。
 - 调用 `swebench.harness.run_evaluation`，观察镜像启动 → 容器执行 → 报告产出；在 `docs/milestones/M0-swebench-first-run.md` 记录镜像大小、耗时、CPU/内存、产物结构。
+- 冻结 `artifacts/M0/baseline-swebench.json`，至少包含：`task_ids[]`、`seed`、`runtime`、`model`、`harness_flags`、`resolved[]`、`cost.execution_usd`、`cost.evaluation_usd`、`git_sha`、`produced_at`。
 
 **内嵌学习（产出 F-06）**
 - 必读：
@@ -299,19 +304,21 @@ Step 12 (interface freeze checkpoint → 进入 M1)
 - `docs/milestones/M0-swebench-first-run.md`
 - `docs/teaching/M0/foundations/F-06-eval-methodology.md`
 - 一次成功的 SWE-bench 报告文件（路径归档进上条 md）
+- `artifacts/M0/baseline-swebench.json`
 
 **进入下一步条件**
 - DoD-4 成立。
 - F-06 入库。
+- `artifacts/M0/baseline-swebench.json` 已冻结，且字段满足本 Step 的最小 schema。
 
 ---
 
 ### Step 9 — EvaluationRunner stub + BenchmarkReport 入 wiki 〔量级：M〕
 
 **工程任务**
-- 落 `src/phoenix/evaluation/runner.py`（SPEC v1.0 §7.2 最小形态）：只支持 `family="swe-bench-verified"` + `subset=N`；封装 Step 8 的手工流程。
+- 落 `src/phoenix/evaluation/runner.py`（SPEC v1.1 §7.2 最小形态）：只支持 `family="swe-bench-verified"` + `subset=N`；封装 Step 8 的手工流程。
 - 扩展 `phoenix cli`：`phoenix eval --benchmark=swe-bench-verified --subset=1 --runtime=claude`。
-- `BenchmarkReport` 写入 SQLite（`phoenix_metrics`）+ JSON 产物，同时 `wiki-ingest` 到 `namespace="evaluation"`（SPEC v1.0 §7.4 INV-EV-1）。
+- `BenchmarkReport` 写入 SQLite（`phoenix_metrics`）+ JSON 产物，同时 `wiki-ingest` 到 `namespace="evaluation"`（SPEC v1.1 §7.4 INV-EV-1）。
 
 **内嵌学习**
 - 无独立新学习节点；本步为 F-06 的代码化落地。要求在 `docs/teaching/M0/engineering/M-eval-runner-design.md` 写一段"为什么 Runner 必须是 Protocol 而不是具体类"的短笔记，引用 F-05b 的 Strategy 讨论。
@@ -379,7 +386,7 @@ Step 12 (interface freeze checkpoint → 进入 M1)
 ### Step 12 — 接口冻结 checkpoint · M0 收官 〔量级：S〕
 
 **工程任务**
-- 交叉审阅 `AgentRuntime`（SPEC v1.0 §2.1）、`MemoryBackend`（SPEC v1.0 §6.1）、`ToolSpec` + `PluginRegistry`（SPEC v1.0 §3.1–§3.2）三个接口：
+- 交叉审阅 `AgentRuntime`（SPEC v1.1 §2.1）、`MemoryBackend`（SPEC v1.1 §6.1）、`ToolSpec` + `PluginRegistry`（SPEC v1.1 §3.1–§3.2）三个接口：
   - 在 Step 3–9 里实际使用时是否出现过想加字段但为了 "M0 先不改" 而绕过的点？统一列出来。
   - 每条待改项决定：A. 本 Step 内同步更新 SPEC v1.1 + 代码；B. 确认延后到 M1 开头，记入 `docs/milestones/M0-interface-backlog.md`。
 - 写 `docs/milestones/M0-retrospective.md`：完成项、未完成项、意外发现、每个 Step 的内嵌学习自评（"我现在能不能不看笔记回答该步的要回答问题？"）。
@@ -433,9 +440,9 @@ Step 12 (interface freeze checkpoint → 进入 M1)
 
 以下三个接口在 Step 12 冻结后，M1 开始前不再破坏性变更：
 
-1. `AgentRuntime` Protocol（SPEC v1.0 §2.1）
-2. `MemoryBackend` Protocol（SPEC v1.0 §6.1）
-3. `ToolSpec` + `PluginRegistry`（SPEC v1.0 §3.1–§3.2）
+1. `AgentRuntime` Protocol（SPEC v1.1 §2.1）
+2. `MemoryBackend` Protocol（SPEC v1.1 §6.1）
+3. `ToolSpec` + `PluginRegistry`（SPEC v1.1 §3.1–§3.2）
 
 若 M0 执行过程中发现任何接口必须破坏性变更，必须先走"SPEC +1 → 本 M0 计划相应 Step 补丁"的流程，不允许"先改代码再补 SPEC"。
 
@@ -444,3 +451,9 @@ Step 12 (interface freeze checkpoint → 进入 M1)
 ## 7. M1 / M2 计划的预告
 
 M1 与 M2 将沿用同样的 Step-based + 学习内嵌结构。起笔时机：Step 12 验收通过且 `M0-retrospective.md` ingest 到 wiki 之后。学习节点 `F-*` 编号延续不重置（F-07 起从 M1 开始）。
+
+---
+
+## 7. 变更日志
+
+- 2026-04-22：收口 Step 1 的官方 shell 基线为 Windows Git Bash（MSYS/MINGW）；`M0-doctor-baseline.md` 与 `tools/phoenix-doctor.sh` 统一按该基线对账。

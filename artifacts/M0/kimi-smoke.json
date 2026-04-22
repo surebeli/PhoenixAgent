@@ -1,0 +1,11 @@
+{
+  "_note": "Schema placeholder for the M0 Step 5 Kimi smoke gate. Replace example values with the first recorded whoami-level probe result.",
+  "model": "kimi-worker",
+  "endpoint": "UNSET",
+  "http_status": 0,
+  "latency_ms": 0,
+  "user_agent_mode": "direct",
+  "passed": false,
+  "notes": "UNSET",
+  "produced_at": "1970-01-01T00:00:00Z"
+}

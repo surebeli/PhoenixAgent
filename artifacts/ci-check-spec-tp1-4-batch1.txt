@@ -1,0 +1,9 @@
+扫描文档: 25
+发现 ID 定义: 105
+错误: 0   警告: 3
+
+=== WARNINGS ===
+  [WARN][D-REF-3] docs/milestones/M0-plan.md: 未找到 '## 0. ... 启动前提' 章节；首个 Milestone（M0）可豁免，M1 起应显式列出
+  [WARN][D-REF-4] docs/RnD-Analysis.md:325: Tier-0 文档提及 M*-plan 文件名（未跨引章节）：'2. `docs/milestones/M0-plan.md`：把 M0 任务落到具体 Step，并配 DoD 与学习 artifact 挂钩。'
+  [WARN][D-REF-4] docs/SPEC.md:897: Tier-0 文档提及 M*-plan 文件名（未跨引章节）：'8. `docs/milestones/M0-plan.md`：按日任务清单。'
+

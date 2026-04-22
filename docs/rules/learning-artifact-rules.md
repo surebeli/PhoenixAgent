@@ -3,7 +3,7 @@
 - 版本：v1.0（2026-04-18）
 - 作者：dy
 - 适用范围：`docs/teaching/**` 下所有教学资产（`F-*`、`M-*`、`experiment-report.md` 等）与其在 AK-llm-wiki 的 ingest 记录。
-- 上位依据：PRD §8（教学交付物要求）、TRD §4.8（D-TL TeachingEmitter）、SPEC v1.0 §9（TeachingEmitter 接口）、`docs/rules/spec-change-policy.md`。
+- 上位依据：PRD §8（教学交付物要求）、TRD §4.8（D-TL TeachingEmitter）、SPEC v1.1 §9（TeachingEmitter 接口）、`docs/rules/spec-change-policy.md`。
 - 下位依据：`docs/quality/definition-of-done.md`、`docs/quality/acceptance-checklist.md`、未来交付的 `tools/ci-check-teaching.py`（C-5）。
 
 ---
@@ -216,6 +216,13 @@ ingested_at: ...
 <给出一条 `phoenix research` 命令，参数完整。>
 ```
 
+### 4.4 M1 起的合并规则（能力块合并）
+
+为降低高密度开发期的文档负担，从 M1 开始，教学闭环校验从“每步必有”放宽至“每能力块必有”：
+- **能力块定义**：以 `M*-plan.md` 的 `§4 学习节点索引` 中声明的主题聚类或步骤集为准。
+- **合并规则**：属于同一能力簇的 `F-*` 节点允许合并编写。例如 `F-07` 和 `F-08` 若同属“核心架构”，可合并为一份。在合并的情况下，只需产出一份文档，其 `step` 字段可使用数组或字符串表达（如 `1-2`），并覆盖相应的知识要求。
+- **触发条件**：单步完成时不强制产出，但在该“能力块”完结时，合并的教学产物必须 ingest。
+
 ---
 
 ## 5. Ingest 规则
@@ -280,7 +287,7 @@ phoenix memory ingest \
 ### 7.1 引用方式
 
 - **节点间引用**：用 `related_nodes` frontmatter + 正文 `[F-07](../../M1/foundations/F-07-react-self-vs-sdk.md)` 双写；CI 校验两者一致。
-- **SPEC 引用**：用 `related_spec` + 正文直接引用章节号 `SPEC v1.3 §5.2`（**不允许**只写 `SPEC v1.0 §5.2`，必须带版本）。
+- **SPEC 引用**：用 `related_spec` + 正文直接引用章节号 `SPEC v1.3 §5.2`（**不允许**只写 `SPEC §5.2`，必须带版本）。
 - **PRD / TRD / RnD 引用**：用 `related_fr` / `related_tr` / `related_rr` 等字段 + 正文带版本引用。
 - **外部资源**：正文给完整 URL；禁止只写"Anthropic 博客"。
 

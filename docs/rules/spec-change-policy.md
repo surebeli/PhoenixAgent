@@ -3,7 +3,7 @@
 - 版本：v1.0（2026-04-18）
 - 作者：dy
 - 适用范围：`docs/SPEC.md`、`docs/PRD.md`、`docs/TRD.md`、`docs/RnD-Analysis.md` 以及所有被其直接引用的接口 / 数据结构 / 常量 / 不变量（INV-*）。
-- 上位依据：PRD §7（愿景关键词"全链路自研可控 / 可插拔"）、TRD §4、SPEC v1.0 §1 ~ §14。
+- 上位依据：PRD §7（愿景关键词"全链路自研可控 / 可插拔"）、TRD §4、SPEC v1.1 §1 ~ §14。
 - 下位依据：`docs/rules/documentation-rules.md`、`docs/rules/learning-artifact-rules.md`、`docs/quality/definition-of-done.md`。
 
 ---
@@ -171,14 +171,15 @@ PhoenixAgent 是"自研编码 Agent + 教学资产"的双栈项目。如果 `SPE
 
 | Milestone | 冻结时点 | 冻结范围 |
 |---|---|---|
-| M0 结束 | Step 12 验收通过 | `AgentRuntime` / `MemoryBackend` / `ToolSpec + PluginRegistry` 三个硬接口；进入 M1 前只允许 Patch |
+| M0 结束 | Step 12 验收通过 | `AgentRuntime` / `MemoryBackend` / `ToolSpec + PluginRegistry` 字段与职责边界冻结；开启 soft-freeze 窗口 |
 | M1 结束 | Step 14 验收通过 | 上述三个 + 新增 `HarnessFlags` / `PermissionRules` / `EvaluationRunner`；进入 M2 前只允许 Patch 与预先批准的 Minor |
 | M2 结束 | Step 12 验收通过 | 上述 + `AgentRuntime` / `LLMClient` / `ModelProfile` 再冻结一次 |
 | 每个 Auto-Research 轮次 | 轮次开跑至轮次收尾 | 本轮 Generator-Evaluator 锁定的全部 SPEC 条款；途中仅允许 Patch |
 
 约束：
 
-- **S-FREEZE-1**：冻结期内任一提案 Minor / Major 变更必须延到下一 Milestone 的 Step 1 之后。
+- **S-FREEZE-0 (Soft-Freeze 窗口)**：M0 结束冻结的接口为"字段与职责边界"粒度。M1 前半期（Step 1–6）为 soft-freeze 窗口，允许方法名与返回结构做 Patch / Minor 温和收敛；Step 7 后进入 hard-freeze。
+- **S-FREEZE-1**：硬冻结期（hard-freeze）内任一提案 Minor / Major 变更必须延到下一 Milestone 的 Step 1 之后。
 - **S-FREEZE-2**：若冻结期内发现 P0 级 bug（违反 INV-* 或造成数据损坏），允许破冻，但必须：
   1. 即时创建紧急 ADR。
   2. 在对应 `docs/milestones/M*-retrospective.md` 记录破冻事件与事后复盘。

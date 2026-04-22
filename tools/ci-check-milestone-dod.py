@@ -68,6 +68,9 @@ PLAN_STEP_RE = re.compile(r"^###\s+Step\s+(?P<n>\d+)\s*[—\-]\s*(?P<title>.+)$"
 # 进入下一步条件标识
 PLAN_NEXT_COND_RE = re.compile(r"\*\*进入下一步条件\*\*", re.MULTILINE)
 
+# T-P0-2：M1 的 DoD-M1-6 必须指向具体 baseline 工件
+M1_BASELINE_PATH_RE = re.compile(r"artifacts/M0/baseline-swebench\.json")
+
 # 破冻事件关键词
 FREEZE_BREAK_RE = re.compile(r"破冻|emergency\s*(?:ADR|break)", re.IGNORECASE)
 
@@ -245,6 +248,21 @@ class MilestoneChecker:
                            f"Step 数 {len(plan.steps)} 但 '**进入下一步条件**' "
                            f"出现 {len(nexts)} 次；可能某 Step 遗漏该小节")
 
+    def check_m1_baseline_reference(self) -> None:
+        """T-P0-2：M1 的 DoD-M1-6 必须引用冻结的 baseline 工件路径。"""
+        plan = self.plans.get("M1")
+        if plan is None:
+            return
+        line_no = plan.dods.get("DoD-M1-6")
+        if line_no is None:
+            return
+        line = plan.text.splitlines()[line_no - 1]
+        if not M1_BASELINE_PATH_RE.search(line):
+            self._err("D-DoD-BASELINE", plan.relpath,
+                      "DoD-M1-6 未引用 `artifacts/M0/baseline-swebench.json`；"
+                      "无法将 resolved rate 阈值绑定到冻结基线",
+                      line=line_no)
+
     def check_retro_closure(self) -> None:
         """每条 plan 的 DoD 必须在对应 retrospective 出现；未出现视为 error。"""
         for m, plan in self.plans.items():
@@ -347,6 +365,7 @@ class MilestoneChecker:
         self.scan_retrospectives()
         self.check_plan_has_dods()
         self.check_step_has_next_conditions()
+        self.check_m1_baseline_reference()
         self.check_retro_closure()
         self.check_retro_marks()
         self.check_freeze_break()

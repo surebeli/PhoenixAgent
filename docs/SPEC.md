@@ -894,7 +894,7 @@ PhoenixAgent/
 5. `src/phoenix/plugins/registry.py`：可注册一个 dummy tool。
 6. `src/phoenix/cli.py`：`phoenix doctor` + `phoenix run` 两条命令。
 7. `tools/phoenix-doctor.sh`：检查 Python、Docker、Anthropic / OpenAI / Kimi 可达性。
-8. `docs/milestones/M0-plan.md`：按日任务清单。
+8. 当前 Milestone 执行计划：按日任务清单。
 
 ---
 

@@ -1,10 +1,10 @@
 # 文档治理规则（Documentation Rules）
 
-- 版本：v1.0（2026-04-18）
+- 版本：v1.1（2026-04-22）
 - 作者：dy
 - 适用范围：`docs/PRD.md`、`docs/TRD.md`、`docs/RnD-Analysis.md`、`docs/SPEC.md`、`docs/milestones/M*-plan.md`、`docs/milestones/M*-retrospective.md`、`docs/rules/**`、`docs/quality/**`、`docs/adr/**`、`docs/migrations/**`。
 - 不覆盖范围：`docs/teaching/**` 由 `docs/rules/learning-artifact-rules.md` 单独治理；仅本规则 §6 定义两者的接口。
-- 上位依据：PRD §1（文档性质与读者）、SPEC v1.0 §14（文档体系）。
+- 上位依据：PRD §1（文档性质与读者）、SPEC v1.1 §14（文档体系）。
 - 下位依据：`docs/rules/spec-change-policy.md`、`docs/rules/learning-artifact-rules.md`、`docs/quality/definition-of-done.md`。
 
 ---
@@ -90,7 +90,17 @@ PhoenixAgent 的 4 件套文档（PRD / TRD / RnD-Analysis / SPEC）加上 miles
 - **D-ID-3**：ID 递增采用两位数填充（`FR-03` 而非 `FR-3`）以保证排序稳定；超过 99 项时升到三位数并回填旧 ID 的宽度。
 - **D-ID-4**：ID 单调递增，禁止复用已废弃 ID。
 
-### 3.3 跨文档引用规则
+### 3.3 ID 定义点允许形态
+
+- **D-ID-5**：对机器校验而言，ID 的“定义点”必须出现在该 ID 的归属文档内，且允许采用以下任一种稳定形态：
+  - 标题首词：`### FR-01 ...`
+  - 加粗首词：`- **FR-01**`
+  - 列表首词：`- INV-EV-1：...`
+  - Markdown 表格首列：`| R-ML-1 | ... |`
+- **D-ID-6**：若某文档使用 Markdown 表格承载条目列表，则表格首列中的 ID 视为正式定义；后续列中的同名 ID 仍视为引用而非重复定义。
+- **D-ID-7**：若某文档使用项目符号承载条目列表，则列表项必须以 ID 开头，后跟 `:` / `：` / 空白说明文字之一；禁止把 ID 埋在句中再依赖人工判断其是否为定义点。
+
+### 3.4 跨文档引用规则
 
 - **D-REF-1**：PRD / TRD / RnD / SPEC / M*-plan 之间相互引用时，**必须带文档名 + 章节号**（如 `TRD §4.3`、`SPEC v1.3 §5.2`）。
 - **D-REF-2**：引用 SPEC 时**必须带版本号**（至少到 Minor）；见 `spec-change-policy` S-VER-2。
@@ -237,4 +247,5 @@ docs/
 
 | 版本 | 日期 | 变更 |
 |---|---|---|
+| v1.1 | 2026-04-22 | 补充 ID 定义点允许形态，明确表格首列与列表首词可作为机器校验的正式定义点。 |
 | v1.0 | 2026-04-18 | 首版；锁定 4 件套职责、ID 体系、LLM-ready 约束、目录结构。 |

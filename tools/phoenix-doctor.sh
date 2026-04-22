@@ -23,6 +23,18 @@ for arg in "$@"; do
   esac
 done
 
+PHX_CFG="${HOME}/.config/phoenix"
+PHX_KEYS_ENV="$PHX_CFG/keys.env"
+
+# 官方基线默认从 ~/.config/phoenix/keys.env 取环境变量，避免仅因当前 shell 未 export
+# 而导致与 Step 1 归档基线不一致。
+if [ -f "$PHX_KEYS_ENV" ]; then
+  set -a
+  # shellcheck disable=SC1090
+  . "$PHX_KEYS_ENV"
+  set +a
+fi
+
 # ANSI（Git Bash / WSL2 支持；--json 模式关闭）
 if [ "$JSON" -eq 0 ] && [ -t 1 ]; then
   C_OK=$'\033[32m'; C_WARN=$'\033[33m'; C_ERR=$'\033[31m'; C_DIM=$'\033[2m'; C_RST=$'\033[0m'
@@ -51,6 +63,32 @@ section() {
 
 have() { command -v "$1" >/dev/null 2>&1; }
 
+official_shell_baseline() {
+  case "$(uname -s 2>/dev/null || echo unknown)" in
+    MINGW*|MSYS*) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+print_shell_fingerprint() {
+  local uname_s shell_bin bash_path py_path python3_path
+  uname_s="$(uname -s 2>/dev/null || echo unknown)"
+  shell_bin="${SHELL:-unknown}"
+  bash_path="$(command -v bash 2>/dev/null || echo n/a)"
+  py_path="$(command -v py 2>/dev/null || echo n/a)"
+  python3_path="$(command -v python3 2>/dev/null || echo n/a)"
+  printf "\n%s== 0. Shell fingerprint ==%s\n" "$C_DIM" "$C_RST"
+  printf "  uname -s                         %s\n" "$uname_s"
+  printf "  SHELL                            %s\n" "$shell_bin"
+  printf "  HOME                             %s\n" "${HOME:-unknown}"
+  printf "  which bash                       %s\n" "$bash_path"
+  printf "  which python3                    %s\n" "$python3_path"
+  printf "  which py                         %s\n" "$py_path"
+  if ! official_shell_baseline; then
+    printf "  %s[WARN]%s running under non-baseline shell (official baseline: Windows Git Bash / MSYS)\n" "$C_WARN" "$C_RST"
+  fi
+}
+
 http_probe() {
   # $1=url $2=timeout
   local url="$1" t="${2:-8}"
@@ -70,6 +108,11 @@ ver_ge() {
   # $1 current $2 required  — 语义版本号 >= 比较
   printf '%s\n%s\n' "$2" "$1" | sort -V -C
 }
+
+# ----------------------------------------------------------------------
+if [ "$JSON" -eq 0 ]; then
+  print_shell_fingerprint
+fi
 
 # ----------------------------------------------------------------------
 section "1. 基础运行时"
@@ -285,7 +328,6 @@ fi
 # ----------------------------------------------------------------------
 section "7. Phoenix 配置与目录"
 
-PHX_CFG="${HOME}/.config/phoenix"
 if [ -d "$PHX_CFG" ]; then
   record PASS "config dir" "$PHX_CFG"
 else

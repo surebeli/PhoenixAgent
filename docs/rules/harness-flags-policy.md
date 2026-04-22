@@ -2,8 +2,8 @@
 
 - 版本：v1.0（2026-04-18）
 - 作者：dy
-- 适用范围：`SPEC v1.0 §5.1 HarnessFlags` 中定义的 `s01_main_loop` ~ `s12_worktree` 共 12 个机制开关，以及 `memory_digest_on_finish` 这类"非 sNN 前缀"的 Harness 级 flag。
-- 上位依据：PRD §10（Harness 12 层推进顺序）、TRD §5（决策 D-HR-1/2/3）、SPEC v1.0 §5.1/§5.2/§5.3。
+- 适用范围：`SPEC v1.1 §5.1 HarnessFlags` 中定义的 `s01_main_loop` ~ `s12_worktree` 共 12 个机制开关，以及 `memory_digest_on_finish` 这类"非 sNN 前缀"的 Harness 级 flag。
+- 上位依据：PRD §10（Harness 12 层推进顺序）、TRD §5（决策 D-HR-1/2/3）、SPEC v1.1 §5.1/§5.2/§5.3。
 - 下位依据：`spec-change-policy.md`、`git-workflow.md`、`definition-of-done.md`、`acceptance-checklist.md`。
 
 ---
@@ -24,9 +24,9 @@
 
 | 术语 | 定义 |
 |---|---|
-| **Default** | `SPEC v1.0 §5.1` 中 dataclass 字段上的默认值；所有未显式覆盖的启动都用这个值 |
+| **Default** | `SPEC v1.1 §5.1` 中 dataclass 字段上的默认值；所有未显式覆盖的启动都用这个值 |
 | **Experimental Override** | 在单次运行 / Auto-Research 轮次内通过 CLI / `PhoenixContext` 覆盖的 flag 值；不改 default |
-| **Flip** | 修改 default 本身（SPEC v1.0 §5.1 内字段默认值变更）；等同 SPEC Minor |
+| **Flip** | 修改 default 本身（SPEC v1.1 §5.1 内字段默认值变更）；等同 SPEC Minor |
 | **Gate Milestone** | 本 flag 首次允许 default = True 的 Milestone；见 §3 |
 | **Safety-Critical Flag** | 关闭会直接违反 `INV-*` / `SEC-*` 的 flag：当前 `s01` / `s02` / `s12` |
 
@@ -34,7 +34,7 @@
 
 ## 3. Flag 清单与治理状态
 
-以 `SPEC v1.0 §5.1` 为权威源；本表新增"治理字段"（Gate Milestone / 当前 default / 翻转约束 / 监控指标）。若 SPEC 版本升级导致字段增删，本表必须同 PR 同步。
+以 `SPEC v1.1 §5.1` 为权威源；本表新增"治理字段"（Gate Milestone / 当前 default / 翻转约束 / 监控指标）。若 SPEC 版本升级导致字段增删，本表必须同 PR 同步。
 
 | Flag | SPEC default | Gate Milestone | 当前治理状态 | 安全分级 | 关键监控指标 | 翻转约束 |
 |---|---|---|---|---|---|---|
@@ -85,7 +85,7 @@
 | Milestone 结束 → 下一 Milestone Step 1 | 所有 flag 的 default 禁止翻转 |
 | Auto-Research 单轮内 | 轮次锁定的 flag 清单禁止翻转（Generator 若要翻转需开新轮次） |
 
-- `HarnessFlags` 默认值是 SPEC v1.0 §5.1 内容；任一翻转同时是 SPEC Minor 变更，因此自然受 `spec-change-policy` §7 约束。本规则额外要求：**即使同 Milestone 内，safety-critical flag 的 Experimental Override 也必须事先登记**。
+- `HarnessFlags` 默认值是 SPEC v1.1 §5.1 内容；任一翻转同时是 SPEC Minor 变更，因此自然受 `spec-change-policy` §7 约束。本规则额外要求：**即使同 Milestone 内，safety-critical flag 的 Experimental Override 也必须事先登记**。
 
 ### 4.3 单 PR 原子性
 
@@ -95,7 +95,7 @@
 ### 4.4 实现约束
 
 **HF-IMPL-1**：`HarnessFlags` dataclass 必须为 frozen；修改只能通过 `replace(...)` 产生新实例（与 INV-RT-* 一致）。
-**HF-IMPL-2**：Flag 消费点必须出现在 SPEC v1.0 §5.1 与 §5.3 对应的模块路径下；禁止在非 `phoenix.harness.*` 模块读取 HarnessFlags 字段（`memory_digest_on_finish` 由 `phoenix.memory.*` 读取属允许例外并须在 SPEC 内显式标注）。
+**HF-IMPL-2**：Flag 消费点必须出现在 SPEC v1.1 §5.1 与 §5.3 对应的模块路径下；禁止在非 `phoenix.harness.*` 模块读取 HarnessFlags 字段（`memory_digest_on_finish` 由 `phoenix.memory.*` 读取属允许例外并须在 SPEC 内显式标注）。
 **HF-IMPL-3**：CLI 层（`phoenix run`）允许以 `--harness-flag sNN=true/false` 方式做 Experimental Override；实现必须打日志并写入 `PhoenixContext.session.flag_overrides`。
 
 ---
@@ -116,7 +116,7 @@
 - 证据必须以 `experiment-report.md` 形式落入 `docs/teaching/M<N>/experiments/<slug>/`。
 
 ### Step 3 — SPEC Minor 变更
-- 修改 `SPEC v1.0 §5.1` 中 dataclass 的默认值；版本号递增 Minor。
+- 修改 `SPEC v1.1 §5.1` 中 dataclass 的默认值；版本号递增 Minor。
 - 同 PR 通过 `ci-check-spec.py`。
 
 ### Step 4 — 依赖校验更新
@@ -173,7 +173,7 @@
 | 非 `phoenix.harness.*` 模块读取 HarnessFlags 字段 | HF-IMPL-2 | 阻塞（静态扫描，future） |
 | `phoenix run --harness-flag` 可用且日志可追 | HF-IMPL-3 | 集成测试 |
 
-CI 扩展落在 `tools/ci-check-flags.py`（占位版已交付：校验 SPEC v1.0 §5.1 字段与本文件 §3 表一致、Safety-Critical default、HarnessFlags frozen=True；未覆盖 HF-IMPL-2 静态扫描与 HF-IMPL-3 集成测试，待后续批次补齐）；在完整落地前由 reviewer 人工核对剩余项。
+CI 扩展落在 `tools/ci-check-flags.py`（占位版已交付：校验 SPEC v1.1 §5.1 字段与本文件 §3 表一致、Safety-Critical default、HarnessFlags frozen=True；未覆盖 HF-IMPL-2 静态扫描与 HF-IMPL-3 集成测试，待后续批次补齐）；在完整落地前由 reviewer 人工核对剩余项。
 
 ---
 

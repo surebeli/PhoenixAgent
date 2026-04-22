@@ -9,10 +9,11 @@
 
 ## 0. 启动前提
 
-- M1-plan.md 的 Step 14 已验收通过，DoD-M1-1 ~ DoD-M1-10 全部成立。
-- `AgentRuntime` / `MemoryBackend` / `ToolSpec + PluginRegistry` / `HarnessFlags` / `PermissionRules` / `EvaluationRunner` 在 M1 retrospective 后已再次冻结（SPEC v1.x）。
-- 学习节点 `F-01 ~ F-22`（M0 + M1）全部 ingest 并可召回；`M1-retrospective.md` 已入 wiki。
+- M1a-plan.md 和 M1b-plan.md 的所有 Step 已验收通过，DoD 全部成立。
+- `AgentRuntime` / `MemoryBackend` / `ToolSpec + PluginRegistry` / `HarnessFlags` / `PermissionRules` / `EvaluationRunner` 在 M1b retrospective 后已再次冻结（SPEC v1.1）。
+- 学习节点 `F-01 ~ F-22`（M0 + M1a + M1b）全部 ingest 并可召回；`M1b-retrospective.md` 已入 wiki。
 - 拥有：Kimi Coding Plan 订阅（`api.moonshot.ai/anthropic` 国际路由）+ Codex API Key + 可本地跑 SWE-bench Verified 的 Docker 环境（M0 Step 8 交付）。
+- 启动冻结版本：`PRD v1.0` / `TRD v1.0` / `SPEC v1.1`。
 
 ---
 
@@ -21,7 +22,8 @@
 - **DoD-M2-1**：`phoenix run --task "hello" --runtime=self --model=kimi-worker` 稳定返回 `status="success"`；连续 20 次无网络层非预期失败（排除上游 429 / 503 合理值）。
 - **DoD-M2-2**：同一 SWE-bench Verified 子集（与 M1 Step 10 完全一致）上，`--runtime=self --model=kimi-worker` 的 Resolved Rate 相对 `--runtime=self --model=codex-base` 下降 ≤ 5 pp（PRD M2-KPI-1）。
 - **DoD-M2-3**：长程任务集（M1 Step 11 交付的 SWE-EVO/SlopCodeBench + `phoenix-custom/*.yaml`）完成率 ≥ 75%（PRD M2-KPI-2）。
-- **DoD-M2-4**：Token 成本（`$/任务` 估算，按当期价目）相对"Codex 单独执行"基准下降 ≥ 60%（PRD M2-KPI-3）。
+- **DoD-M2-4a**：Token 成本（`$/任务` 估算，仅执行口径）相对"Codex 单独执行"基准下降 ≥ 60%（PRD M2-KPI-3a）。
+- **DoD-M2-4b**：端到端总成本（含评测及 Research 口径）相对 M1 基线有可跟踪的对比数据（PRD M2-KPI-3b）。
 - **DoD-M2-5**：`OpenAIAgentsRuntime` 作为 `AgentRuntime` 的第三个具体实现上线；在 ≥ 10 个相同任务上与 `ClaudeAgentSDKRuntime` / `PhoenixCoreRuntime` 产生可对比的三方结果表。
 - **DoD-M2-6**：Runtime / Model 热切换回归：中途 `--runtime` 或 `--model` 切换不破坏 `MemoryBackend` 的 INV-MM-1/2/3 不变量；全回归用例 100% 通过（PRD M2-KPI-4）。
 - **DoD-M2-7**：`docs/teaching/M2/M-codex-vs-kimi-report.md` 产出；含 Resolved Rate / Long-horizon / 成本 / 失败模式画像四张图表。
@@ -74,7 +76,7 @@ Step 12 (M2 retrospective + interface freeze + M3 预告)
 
 **工程任务**
 - 在 `~/.config/phoenix/models.toml` 新增 `kimi-worker` profile：`provider="anthropic-compatible"`、`base_url="https://api.moonshot.ai/anthropic"`、`model="kimi-k2.5"`（或当期最新）、`auth_env="KIMI_API_KEY"`、`headers={"X-Phoenix-Client"="phoenix/M2"}`。
-- `src/phoenix/model/registry.py` 补充 `ModelProfile` 装载验证（SPEC v1.0 §4）：能从 `keys.env` 读取 `KIMI_API_KEY` 并做 `whoami` 级探针（如调用一次最轻 prompt 确认 200）。
+- `src/phoenix/model/registry.py` 补充 `ModelProfile` 装载验证（SPEC v1.1 §4）：能从 `keys.env` 读取 `KIMI_API_KEY` 并做 `whoami` 级探针（如调用一次最轻 prompt 确认 200）。
 - `phoenix-doctor.sh` 新增 Kimi 段落：检测 `KIMI_API_KEY` 存在、`base_url` 可达（只 HEAD，不扣费）。
 
 **内嵌学习（产出 F-23）**
@@ -196,7 +198,7 @@ Step 12 (M2 retrospective + interface freeze + M3 预告)
   - Codex SDK 的 quickstart 与 examples（特别是 `tool_use` / `function-calling` 部分）。
 - 要回答（写进 `F-27-openai-agents-vs-claude-sdk.md`）：
   - Agents SDK 的 `Runner` 与 Claude SDK 的 `query(...)` 在控制粒度上的差异？
-  - Tool 定义方式（typed function vs JSON schema）对 PhoenixAgent `ToolSpec`（SPEC v1.0 §2）的映射成本？
+  - Tool 定义方式（typed function vs JSON schema）对 PhoenixAgent `ToolSpec`（SPEC v1.1 §2）的映射成本？
   - `Handoff` 概念与 PhoenixAgent subagent（F-15）的相似与差异？
 
 **产物**
@@ -221,7 +223,7 @@ Step 12 (M2 retrospective + interface freeze + M3 预告)
 **内嵌学习（产出 F-28）**
 - 必读：F-27 回看 + Agents SDK 的 `AgentHooks` / `lifecycle` 文档。
 - 要回答：
-  - 把 PhoenixAgent 的 Hook（JSONL 子进程协议，SPEC v1.0 §12）桥接到 Agents SDK lifecycle 的最佳方式？
+  - 把 PhoenixAgent 的 Hook（JSONL 子进程协议，SPEC v1.1 §12）桥接到 Agents SDK lifecycle 的最佳方式？
   - Agents SDK 是否会"吞掉" `tool_use` 细节，导致某些验证链步骤无处插入？有哪些适配缺口？
   - 何时该认输——即"用 Agents SDK 做 Runtime 外观、但不强行把 PhoenixAgent 全部 Harness 塞进去"的边界？
 
@@ -270,7 +272,7 @@ Step 12 (M2 retrospective + interface freeze + M3 预告)
   - 仅换 `--model`（codex → kimi / kimi → codex）。
   - 仅换 `--runtime`（self → claude-sdk / self → openai-agents）。
   - 同时换 `--runtime` + `--model`。
-- 每次切换后验证 `MemoryBackend` 的三个不变量（SPEC v1.0 §6 INV-MM-1/2/3）：
+- 每次切换后验证 `MemoryBackend` 的三个不变量（SPEC v1.1 §6 INV-MM-1/2/3）：
   - 跨 namespace digest 不重复。
   - subagent digest 不污染主 agent。
   - 新 ingest 一定会更新 digest。
@@ -449,3 +451,12 @@ M3 的候选主线（M2 retrospective 后决策，不在本文档锁死）：
 - PhoenixAgent 自研插件生态开放（第三方 plugin 安全扫描 + 注册协议）。
 
 学习节点 `F-*` 从 F-35 接续。起笔时机：M2 Step 12 验收通过且 `M2-retrospective.md` ingest 到 wiki 之后，并依据 PRD OP-01 在 M2 验收会上确认 M3 主线。
+
+
+---
+
+## 7. 变更日志
+
+| 版本 | 日期 | 变更 |
+|---|---|---|
+| v1.0 | 2026-04-18 | 首版；锁定 Kimi 接入、三方 Runtime 对齐与热切换回归计划。 |

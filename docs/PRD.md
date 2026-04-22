@@ -203,7 +203,8 @@ FR-01 至 FR-08 标号供 TRD / SPEC / 验收清单交叉引用。
 - **Milestone 2（Kimi 接入与对齐）**
   - M2-KPI-1：自研 Core + Kimi 的 Resolved Rate 相对 M1 基准下降幅度 ≤ 5 个百分点。
   - M2-KPI-2：长程任务完成率 ≥ 75%。
-  - M2-KPI-3：Token 成本相对 Codex 基准下降 ≥ 60%。
+  - M2-KPI-3a：Token 成本（执行口径）相对 Codex 基准下降 ≥ 60%。
+  - M2-KPI-3b：端到端总成本（含执行+评测+Research）相对 M1 基准下降幅度达到验收目标（具体 X% 由 M1 baseline 设定）。
   - M2-KPI-4：Runtime / Model 热切换 100% 通过记忆一致性回归。
 
 ### 9.2 项目级
@@ -290,3 +291,11 @@ FR-01 至 FR-08 标号供 TRD / SPEC / 验收清单交叉引用。
 - 下一步：Fork 本 PRD 到 AK-llm-wiki → 执行 `wiki-import` + `digest`；运行 Milestone 0 环境搭建脚本；每阶段结束后重新 ingest 本文档更新版。
 
 PhoenixAgent 项目启动，复利 + 检验闭环正式开启。
+
+---
+
+## 14. 变更日志
+
+| 版本 | 日期 | 变更 |
+|---|---|---|
+| v1.0 | 2026-04-18 | 首版；定义愿景、Milestone KPI、验收口径与外部知识来源。 |

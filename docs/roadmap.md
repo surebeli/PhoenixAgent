@@ -3,7 +3,7 @@
 - 版本：v1.0（2026-04-18）
 - 作者：dy
 - 适用范围：跨 Milestone 的总体排布、基线冻结、KPI 横切、关键决策分叉。
-- 上位依据：PRD §9（KPI）、PRD §10（里程碑）、TRD §2 ~ §6、SPEC v1.0 §14。
+- 上位依据：PRD §9（KPI）、PRD §10（里程碑）、TRD §2 ~ §6、SPEC v1.1 §14。
 - 下位依据：`docs/milestones/M*-plan.md`、`docs/risk-register.md`、`docs/adr/**`。
 - 身份：**本文件不是执行计划，不分配日程**。Step 级别的任务在 `docs/milestones/M<N>-plan.md` 内展开；本文件只定义"Milestone 之间的承接关系、冻结点、决策分支"。
 
@@ -23,7 +23,7 @@
 
 | Milestone | 身份（一句话） | 状态 | 计划文件 | 验收标志 |
 |---|---|---|---|---|
-| M0 | 环境 + 四件套文档 + `ClaudeAgentSDKRuntime` 最小骨架 | 进行中 | `docs/milestones/M0-plan.md` | Step 12 验收 + `docs/SPEC.md` v1.0 冻结 |
+| M0 | 环境 + 四件套文档 + `ClaudeAgentSDKRuntime` 最小骨架 | 进行中 | `docs/milestones/M0-plan.md` | Step 12 验收 + `docs/SPEC.md` v1.1 冻结 |
 | M1 | 自研 `PhoenixCoreRuntime` + 编程插件 + `MemoryBackend` + 检验框架 + Auto-Research | 计划 | `docs/milestones/M1-plan.md` | DoD-M1-1 ~ DoD-M1-10 全成立 |
 | M2 | Kimi 接入 + 模型热切换 + `OpenAIAgentsRuntime` + 三方对齐 | 计划 | `docs/milestones/M2-plan.md` | DoD-M2-1 ~ DoD-M2-10 全成立 |
 | M3+ | 以 M1/M2 模板交替推进：新 Runtime / 新 Model / 新插件 / 新 Benchmark | 未定 | 待 M2 验收后按 §6 决策分支产出 | — |
@@ -34,12 +34,13 @@ M0/M1/M2 的 KPI、DoD、Step 全部由对应 `M*-plan.md` 权威承载；本文
 
 ## 3. 冻结基线表（Freeze Baseline）
 
-每个 Milestone 结束时冻结一批硬接口。冻结后在下一 Milestone 期间只允许 Patch / 预先批准的 Minor；Major 变更必须延到再下一 Milestone 的 Step 1 之后（见 `spec-change-policy` §7）。
+每个 Milestone 结束时冻结一批硬接口。冻结对象为"字段与职责边界"而非具体接口签名，方法名与返回结构允许在下一 Milestone 前半段以 Patch / Minor 温和收敛。硬冻结期内 Major 变更必须延到再下一 Milestone 的 Step 1 之后（见 `spec-change-policy` §7）。
 
 | 冻结时点 | 新冻结的硬接口 | 已冻结累计 | 对应 SPEC 版本 | 解冻条件 |
 |---|---|---|---|---|
-| M0 结束 | `AgentRuntime`、`MemoryBackend`、`ToolSpec + PluginRegistry` | 上列 3 项 | v1.0 | 仅 Major 变更 + ADR |
-| M1 结束 | `HarnessFlags`、`PermissionRules`、`EvaluationRunner` | 上列 6 项 | v1.x（M1 期间递增） | 同上 |
+| M0 结束 | `AgentRuntime`、`MemoryBackend`、`ToolSpec + PluginRegistry` | 上列 3 项 | v1.1 | 仅 Major 变更 + ADR |
+| M1a 结束 | `HarnessFlags`、`PermissionRules` | 上列 5 项 | v1.1（若 M1a 期间升版，retrospective 必须回填具体版本） | 同上 |
+| M1b 结束 | `EvaluationRunner` | 上列 6 项 | v1.1 | 同上 |
 | M2 结束 | `LLMClient`、`ModelProfile`（`AgentRuntime` 再冻结一次） | 上列 8 项 | v1.y / v2.0（视变更级别） | 同上 |
 | 每个 Auto-Research 轮次 | 该轮锁定的全部 SPEC 条款（通常不新增） | — | 该轮 `spec_version` | 轮次收尾后自动解锁 |
 
@@ -51,7 +52,7 @@ M0/M1/M2 的 KPI、DoD、Step 全部由对应 `M*-plan.md` 权威承载；本文
 
 按 KPI 纵向排列、Milestone 横向对照。"—"表示该 Milestone 不考核本项；"承"表示沿用上一 Milestone 阈值。
 
-| KPI | M1 | M2 | M3+（默认策略） |
+| KPI | M1a+M1b | M2 | M3+（默认策略） |
 |---|---|---|---|
 | Resolved Rate（SWE-bench Verified subset） | ≥ 基线 85%（M1-KPI-1） | 相对 M1 基准下降 ≤ 5 pp（M2-KPI-1） | 不低于 M2 同值；新 Runtime 上线时允许首轮 −5 pp 但 retrospective 内必须回升 |
 | 长程任务完成率 | ≥ 80%（M1-KPI-2） | ≥ 75%（M2-KPI-2） | 承 M2 且每新增一个 Benchmark 不下降 |
@@ -71,13 +72,20 @@ M0 Step 12 验收
    ├── 冻结 AgentRuntime / MemoryBackend / ToolSpec+Registry
    │
    ▼
-M1 Step 1..14（见 M1-plan.md §2）
+M1a Step 1..8（见 M1a-plan.md §2）
    │  - Step 1..3: 自研 Runtime + HarnessFlags + PermissionRules
-   │  - Step 4..6: 编程插件 + MemoryBackend + Evaluation
-   │  - Step 7..10: 基准测试与长程任务
-   │  - Step 11..14: Auto-Research + retrospective
+   │  - Step 4..6: 编程插件 + 基础 Memory
+   │  - Step 7..8: 基础评测集成 + retrospective
    │
-   ├── 冻结 HarnessFlags / PermissionRules / EvaluationRunner
+   ├── 冻结 HarnessFlags / PermissionRules (部分)
+   │
+   ▼
+M1b Step 1..7（见 M1b-plan.md §2）
+   │  - Step 1..3: 完整 Memory 动词 + `EvaluationRunner`
+   │  - Step 4..5: 长程任务 + Auto-Research 迭代
+   │  - Step 6..7: 教学闭环 + retrospective
+   │
+   ├── 冻结 EvaluationRunner
    │
    ▼
 M2 Step 1..12（见 M2-plan.md §2）
@@ -133,4 +141,4 @@ M3+ 决策分支（见 §6）
 
 | 版本 | 日期 | 变更 |
 |---|---|---|
-| v1.0 | 2026-04-18 | 首版；承接 PRD §10 与 `M0/M1/M2-plan`，锁定冻结基线、KPI 横切、M3+ 决策分支。 |
+| v1.0 | 2026-04-18 | 首版；承接 PRD §10 与 M0/M1/M2-plan，锁定冻结基线、KPI 横切、M3+ 决策分支。 |

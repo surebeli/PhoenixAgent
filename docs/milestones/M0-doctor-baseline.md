@@ -7,6 +7,18 @@
 
 ---
 
+## 0. Official Shell Baseline
+
+- 官方基线：`Windows 11 + Git Bash (MSYS/MINGW)`。
+- `doctor` 的冻结证据、Step 1 的通过性判断、后续与本文件的结果对账，均以这套 shell 语义为准。
+- 最小 profile：
+  - `HOME` 指向 Windows 用户目录映射（示例：`/c/Users/<user>`），Phoenix 配置位于 `~/.config/phoenix/`。
+  - Python 入口优先用 `py -3`，与仓库脚本和 `AGENTS.md` 约定一致。
+  - API Key 与 `*_BASE_URL` 默认从 `~/.config/phoenix/keys.env` 提供；若当前 shell 未 `export`，`tools/phoenix-doctor.sh` 会自动加载该文件用于对账。
+  - 非 Git Bash 的 bash 环境允许作为兼容运行环境，但不作为 Step 1 / M0 的冻结基线。
+
+---
+
 ## 1. 运行命令与产物
 
 ```bash

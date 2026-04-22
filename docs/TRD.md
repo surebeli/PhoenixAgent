@@ -57,7 +57,7 @@ PhoenixAgent 采用**八层可插拔架构**，每层之间通过显式接口解
   - 自研运行时不引入额外 SDK，仅使用 httpx + anthropic-compatible 封装。
 - 模式：Strategy Pattern + Factory Pattern + Runtime Registry（依赖注入）。
 
-### 2.3 关键接口（完整签名见 SPEC v1.0 §2）
+### 2.3 关键接口（完整签名见 SPEC v1.1 §2）
 ```python
 class AgentRuntime(Protocol):
     def start_session(cfg: RuntimeConfig) -> SessionHandle: ...
@@ -201,7 +201,7 @@ mapToolResultToAPI()    # 标准化为 provider 期望格式回塞
 ### 6.1 目标
 强制实现"一次编译、复利工程"的记忆闭环：`ingest → query → digest → import → graph`。
 
-### 6.2 接口契约（SPEC v1.0 §5 有完整签名）
+### 6.2 接口契约（SPEC v1.1 §5 有完整签名）
 ```python
 class MemoryBackend(Protocol):
     def ingest(source: IngestSource) -> IngestResult: ...
@@ -439,14 +439,14 @@ phoenix teach publish --dry-run
 
 | PRD 编号 | TRD 章节 | SPEC 章节 |
 |---|---|---|
-| FR-01 AgentRuntime | §2 | SPEC v1.0 §2 |
-| FR-02 Model Routing | §3 | SPEC v1.0 §4 |
-| FR-03 12 层 Harness | §4 | SPEC v1.0 §5 |
-| FR-04 Plugin | §5 | SPEC v1.0 §3 |
-| FR-05 Memory | §6 | SPEC v1.0 §6 |
-| FR-06 Evaluation | §7 | SPEC v1.0 §7 |
-| FR-07 Auto-Research | §8 | SPEC v1.0 §8 |
-| FR-08 Teaching | §9 | SPEC v1.0 §9 |
+| FR-01 AgentRuntime | §2 | SPEC v1.1 §2 |
+| FR-02 Model Routing | §3 | SPEC v1.1 §4 |
+| FR-03 12 层 Harness | §4 | SPEC v1.1 §5 |
+| FR-04 Plugin | §5 | SPEC v1.1 §3 |
+| FR-05 Memory | §6 | SPEC v1.1 §6 |
+| FR-06 Evaluation | §7 | SPEC v1.1 §7 |
+| FR-07 Auto-Research | §8 | SPEC v1.1 §8 |
+| FR-08 Teaching | §9 | SPEC v1.1 §9 |
 
 ---
 
@@ -455,3 +455,12 @@ phoenix teach publish --dry-run
 1. 基于 TRD 锁定 SPEC.md 中每个接口的最小实现。
 2. Milestone 0 `phoenix doctor` 脚本可立即开工：校验 Python 版本、Docker、LiteLLM、Anthropic / OpenAI 可达性、AK-llm-wiki 路径、SWE-bench 镜像。
 3. 所有决策（D-RT / D-ML / D-HR / D-PL / D-MM / D-EV / D-AR / D-TL）作为开发过程中的不可降级约束；若需修改，必须先更新 TRD 并重新 `wiki-ingest`。
+
+
+---
+
+## 19. 变更日志
+
+| 版本 | 日期 | 变更 |
+|---|---|---|
+| v1.0 | 2026-04-18 | 首版；定义八层架构、关键决策、接口对应表与实现路径。 |

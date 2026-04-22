@@ -3,7 +3,7 @@
 - 版本：v1.0（2026-04-18）
 - 作者：dy
 - 适用范围：PhoenixAgent 单仓（`F:\workspace\ai\PhoenixAgent`）的一切 git 操作：分支、commit、PR、worktree、rebase、revert、release tag。
-- 上位依据：TRD §5 / SPEC v1.0 §5.1（`s12_worktree` = True，worktree 为基本安全隔离）、TRD SEC-02（代码改动必须在 git worktree 内）。
+- 上位依据：TRD §5 / SPEC v1.1 §5.1（`s12_worktree` = True，worktree 为基本安全隔离）、TRD SEC-02（代码改动必须在 git worktree 内）。
 - 下位依据：`documentation-rules.md`、`spec-change-policy.md`、`definition-of-done.md`、`acceptance-checklist.md`。
 
 ---
@@ -200,7 +200,7 @@ PhoenixAgent 同时承载两类产物：代码（`src/phoenix/**`）与文档 / 
 
 ## 5. git worktree 规则（对齐 s12 / SEC-02）
 
-`SPEC v1.0 §5.1` 默认 `s12_worktree = True`；`TRD SEC-02` 规定"代码改动必须在 git worktree 内"。本节把这两条落成可操作规则。
+`SPEC v1.1 §5.1` 默认 `s12_worktree = True`；`TRD SEC-02` 规定"代码改动必须在 git worktree 内"。本节把这两条落成可操作规则。
 
 ### 5.1 何时必须走 worktree
 
@@ -277,7 +277,7 @@ PhoenixAgent 同时承载两类产物：代码（`src/phoenix/**`）与文档 / 
   - Agent 生成的 commit 必须走同一格式（§3）。
   - Agent 生成的 PR 描述必须通过 §4.4 模板（允许作者最后修订）。
   - Agent **禁止**在没有显式用户确认下：`git push --force`、`git reset --hard`、删除 tag、修改 `.git/config`、跳过 hook。
-- Agent 的所有 `git` 写操作必须在 PhoenixContext 下经 `PermissionRules.check` 放行（见 SPEC v1.0 §11）。
+- Agent 的所有 `git` 写操作必须在 PhoenixContext 下经 `PermissionRules.check` 放行（见 SPEC v1.1 §11）。
 
 ---
 

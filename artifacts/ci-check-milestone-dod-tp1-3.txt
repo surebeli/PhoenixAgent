@@ -1,0 +1,6 @@
+扫描 plan: 3
+扫描 retrospective: 0
+DoD 总数: 27
+错误: 0   警告: 0
+
+全部通过。
