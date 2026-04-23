@@ -4,6 +4,8 @@
 # 运行日志 / 临时产物
 logs/
 *.log
+artifacts/phoenix_metrics.sqlite3
+artifacts/M0/evaluation/
 
 # 误入的 Windows 绝对路径目录（某些工具把 "F:\..." 当作相对路径创建）
 F:/

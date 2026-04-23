@@ -321,13 +321,13 @@ Step 12 (interface freeze checkpoint → 进入 M1)
 - `BenchmarkReport` 写入 SQLite（`phoenix_metrics`）+ JSON 产物，同时 `wiki-ingest` 到 `namespace="evaluation"`（SPEC v1.1 §7.4 INV-EV-1）。
 
 **内嵌学习**
-- 无独立新学习节点；本步为 F-06 的代码化落地。要求在 `docs/teaching/M0/engineering/M-eval-runner-design.md` 写一段"为什么 Runner 必须是 Protocol 而不是具体类"的短笔记，引用 F-05b 的 Strategy 讨论。
+- 无独立新学习节点；本步为 F-06 的代码化落地。要求在 `docs/teaching/M0/engineering/M-eng-eval-runner-design.md` 写一段"为什么 Runner 必须是 Protocol 而不是具体类"的短笔记，引用 F-05b 的 Strategy 讨论。
 
 **产物**
 - `src/phoenix/evaluation/runner.py`（最小）
 - `src/phoenix/evaluation/swebench.py`（Step 8 手工流程的封装）
 - SQLite 中第一条 `benchmark_resolved` 指标
-- `docs/teaching/M0/engineering/M-eval-runner-design.md`
+- `docs/teaching/M0/engineering/M-eng-eval-runner-design.md`
 
 **进入下一步条件**
 - `phoenix eval --benchmark=swe-bench-verified --subset=1 --runtime=claude` 输出合法 `BenchmarkReport` 且入 wiki。

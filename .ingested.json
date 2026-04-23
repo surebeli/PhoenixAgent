@@ -43,5 +43,10 @@
     "ingested_at": "2026-04-23T12:53:19.1793233+08:00",
     "path": "docs/teaching/M0/foundations/F-mem-2-ingest-query-digest.md",
     "slug": "2-ingest-query-digest"
+  },
+  "M-eng-eval-runner-design": {
+    "ingested_at": "2026-04-23T13:05:00+08:00",
+    "path": "docs/teaching/M0/engineering/M-eng-eval-runner-design.md",
+    "slug": "eval-runner-design"
   }
 }

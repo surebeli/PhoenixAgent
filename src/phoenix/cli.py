@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from phoenix.evaluation import BenchmarkReport, DefaultEvaluationRunner
 from phoenix.memory import AKLLMWikiBackend, MemoryBackend
 from phoenix.plugins import EchoPlugin, PluginRegistry
 from phoenix.runtime import PermissionRules, RuntimeConfig, Task, make_runtime
@@ -46,6 +47,28 @@ def _serialize_result(result: Any, runtime_name: str, model_profile: str) -> dic
         "duration_s": result.duration_s,
         "error": result.error,
         "events": result.events,
+    }
+
+
+def _serialize_benchmark_report(report: BenchmarkReport) -> dict[str, Any]:
+    return {
+        "runtime": report.runtime,
+        "model_profile": report.model_profile,
+        "family": report.family,
+        "tasks_total": report.tasks_total,
+        "resolved": report.resolved,
+        "cost": report.cost,
+        "cost_usd": report.cost_usd,
+        "tokens_in": report.tokens_in,
+        "tokens_out": report.tokens_out,
+        "per_task": [
+            {
+                "task_id": task_id,
+                "verify": verify,
+            }
+            for task_id, verify in report.per_task
+        ],
+        "generated_at": report.generated_at,
     }
 
 
@@ -125,6 +148,32 @@ def run_command(args: argparse.Namespace) -> int:
     return exit_code
 
 
+def eval_command(args: argparse.Namespace) -> int:
+    memory = AKLLMWikiBackend()
+    runner = DefaultEvaluationRunner(ROOT, memory=memory)
+
+    report = runner.run(
+        args.benchmark,
+        subset=args.subset,
+        runtime=args.runtime,
+        model_profile=args.model,
+        seed=args.seed,
+    )
+
+    out_path = Path(args.out) if args.out else ROOT / "artifacts" / "M0" / "evaluation" / f"benchmark-{args.benchmark}-{report.generated_at.strftime('%Y%m%d-%H%M%S')}.json"
+    exported = runner.export_report(report, out_path)
+    payload = _serialize_benchmark_report(report)
+    payload["artifact"] = exported
+
+    if args.json:
+        print(json.dumps(payload, ensure_ascii=False, indent=2, default=_json_default))
+    else:
+        print(f"family={report.family} runtime={report.runtime} model={report.model_profile}")
+        print(f"resolved={report.resolved}/{report.tasks_total}")
+        print(f"artifact={exported}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="phoenix", description="PhoenixAgent minimal CLI.")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -135,6 +184,16 @@ def build_parser() -> argparse.ArgumentParser:
     p_run.add_argument("--model", default="claude-worker")
     p_run.add_argument("--json", action="store_true")
     p_run.set_defaults(func=run_command)
+
+    p_eval = sub.add_parser("eval", help="Run a benchmark evaluation with the selected runtime metadata.")
+    p_eval.add_argument("--benchmark", choices=["swe-bench-verified"], required=True)
+    p_eval.add_argument("--subset", type=int, default=1)
+    p_eval.add_argument("--runtime", choices=["claude", "self", "openai"], default="claude")
+    p_eval.add_argument("--model", default="claude-worker")
+    p_eval.add_argument("--seed", type=int, default=0)
+    p_eval.add_argument("--out")
+    p_eval.add_argument("--json", action="store_true")
+    p_eval.set_defaults(func=eval_command)
 
     return parser
 
