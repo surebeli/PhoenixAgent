@@ -155,6 +155,34 @@ def parse_frontmatter(text: str) -> tuple[dict[str, Any] | None, str]:
         return None, text
 
 
+def parse_notebook_frontmatter(text: str) -> tuple[dict[str, Any] | None, str]:
+    """从 notebook 的首个 markdown cell 读取 frontmatter，并拼接 markdown cell 正文。"""
+    try:
+        notebook = json.loads(text)
+    except json.JSONDecodeError:
+        return None, text
+    if not isinstance(notebook, dict):
+        return None, text
+
+    markdown_cells: list[str] = []
+    for cell in notebook.get("cells") or []:
+        if not isinstance(cell, dict) or cell.get("cell_type") != "markdown":
+            continue
+        source = cell.get("source", "")
+        if isinstance(source, list):
+            source = "".join(str(part) for part in source)
+        else:
+            source = str(source)
+        markdown_cells.append(source)
+
+    if not markdown_cells:
+        return None, ""
+
+    fm, first_body = parse_frontmatter(markdown_cells[0])
+    body = "\n\n".join(part for part in [first_body, *markdown_cells[1:]] if part)
+    return fm, body
+
+
 # =====================================================================
 # 节点模型
 # =====================================================================
@@ -277,7 +305,10 @@ class Checker:
             rel = str(p.relative_to(self.root)).replace(os.sep, "/")
             text = p.read_text(encoding="utf-8", errors="replace")
             type_ = classify_file(p)
-            fm, body = parse_frontmatter(text)
+            if p.suffix == ".ipynb":
+                fm, body = parse_notebook_frontmatter(text)
+            else:
+                fm, body = parse_frontmatter(text)
 
             if fm is None:
                 self._err("L-ART-FM-MISSING", rel, "缺少 YAML frontmatter")

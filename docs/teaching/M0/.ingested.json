@@ -1,0 +1,17 @@
+{
+  "M-runtime-abstraction": {
+    "ingested_at": "2026-04-23T15:29:21.8831443+08:00",
+    "path": "docs/teaching/M0/M-runtime-abstraction.md",
+    "slug": "runtime-abstraction"
+  },
+  "M-evaluation-setup": {
+    "ingested_at": "2026-04-23T15:29:21.8831443+08:00",
+    "path": "docs/teaching/M0/M-evaluation-setup.md",
+    "slug": "evaluation-setup"
+  },
+  "M-walkthrough": {
+    "ingested_at": "2026-04-23T15:29:21.8831443+08:00",
+    "path": "docs/teaching/M0/M-walkthrough.ipynb",
+    "slug": "walkthrough"
+  }
+}

@@ -13,7 +13,7 @@ related_inv: []
 related_nodes: [F-02, F-05a, F-05b]
 replaces: null
 ingested: true
-ingested_at: 2026-04-23T13:23:25.2130126+08:00
+ingested_at: 2026-04-23T15:19:27.6061747+08:00
 readers: [llm, human]
 ---
 

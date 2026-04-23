@@ -30,7 +30,7 @@
     "slug": "mcp-spec-digest"
   },
   "F-04": {
-    "ingested_at": "2026-04-23T13:23:25.2130126+08:00",
+    "ingested_at": "2026-04-23T15:19:27.6061747+08:00",
     "path": "docs/teaching/M0/foundations/F-04-context-engineering.md",
     "slug": "context-engineering"
   },
@@ -53,5 +53,20 @@
     "ingested_at": "2026-04-23T13:05:00+08:00",
     "path": "docs/teaching/M0/engineering/M-eng-eval-runner-design.md",
     "slug": "eval-runner-design"
+  },
+  "M-runtime-abstraction": {
+    "ingested_at": "2026-04-23T15:29:21.8831443+08:00",
+    "path": "docs/teaching/M0/M-runtime-abstraction.md",
+    "slug": "runtime-abstraction"
+  },
+  "M-evaluation-setup": {
+    "ingested_at": "2026-04-23T15:29:21.8831443+08:00",
+    "path": "docs/teaching/M0/M-evaluation-setup.md",
+    "slug": "evaluation-setup"
+  },
+  "M-walkthrough": {
+    "ingested_at": "2026-04-23T15:29:21.8831443+08:00",
+    "path": "docs/teaching/M0/M-walkthrough.ipynb",
+    "slug": "walkthrough"
   }
 }
