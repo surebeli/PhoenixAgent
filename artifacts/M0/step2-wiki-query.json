@@ -1,0 +1,179 @@
+{
+  "generated_at": "2026-04-23T00:38:49+08:00",
+  "phoenix_docs": {
+    "PhoenixAgent 愿景": {
+      "operation": "wiki-query",
+      "question": "PhoenixAgent 愿景",
+      "hit_count": 5,
+      "hits": [
+        {
+          "namespace": "phoenix-docs",
+          "title": "PhoenixAgent 产品需求文档（PRD）",
+          "source_path": "F:\\workspace\\ai\\PhoenixAgent\\docs\\PRD.md",
+          "stored_path": "namespaces\\phoenix-docs\\import\\PRD.md",
+          "score": 174,
+          "citation": "F:\\workspace\\ai\\PhoenixAgent\\docs\\PRD.md:22-24",
+          "excerpt": "## 2. 项目愿景与一句话定位\n\n**一句话定位**：PhoenixAgent 是一个兼顾\"研发\"与\"学习\"的自研编码 Agent 系统，从 Claude Agent SDK 骨架起步，经由自研 Agent Core + 插件化多场景，最终成为可在编码任务上对标甚至超越 Claude Agent SDK + Codex 基准的、全链路自主可控、可插拔 Harness、可切换模型、可量化验收的 Agent 平台。"
+        },
+        {
+          "namespace": "phoenix-docs",
+          "title": "PhoenixAgent 研发分析（RnD-Analysis）",
+          "source_path": "F:\\workspace\\ai\\PhoenixAgent\\docs\\RnD-Analysis.md",
+          "stored_path": "namespaces\\phoenix-docs\\import\\RnD-Analysis.md",
+          "score": 158,
+          "citation": "F:\\workspace\\ai\\PhoenixAgent\\docs\\RnD-Analysis.md:187-189",
+          "excerpt": "验收条件：\n- ✅ `phoenix run --task \"hello\" --runtime=claude` 返回结构化结果。\n- ✅ 一次 `wiki-query \"PhoenixAgent 愿景\"` 命中本 PRD §2。"
+        },
+        {
+          "namespace": "phoenix-docs",
+          "title": "为什么 PhoenixAgent 先做 LLM Wiki 而不是纯向量 RAG",
+          "source_path": "F:\\workspace\\ai\\PhoenixAgent\\docs\\teaching\\M0\\foundations\\F-mem-1-wiki-why.md",
+          "stored_path": "namespaces\\phoenix-docs\\import\\teaching\\M0\\foundations\\F-mem-1-wiki-why.md",
+          "score": 106,
+          "citation": "F:\\workspace\\ai\\PhoenixAgent\\docs\\teaching\\M0\\foundations\\F-mem-1-wiki-why.md:24-26",
+          "excerpt": "PhoenixAgent 在 M0 阶段还没有大规模代码仓，而是一个**治理层先行**的项目：PRD / TRD / RnD / SPEC、规则、ADR、教学节点才是当前最重要的“工作记忆”。这类知识的价值不在“找到语义接近的一段话”，而在**保留稳定术语、引用链、决策上下文和跨文档约束**。因此，项目需要的不是“每次提问都重新检索一批 chunk”，而是把高价值知识先编译成可持续维护的中间层；这正是 Karpathy 所说的 LLM Wiki。\n\n对 PhoenixAgent 来说，“一次编译、复利工程”有两个直接收益。第一，作者和 Agent 共享同一份人类可读的记忆层，后续任何会话都能从已经整理好的节点起步，而不是反复从原始文档中二次发现。第二，学习节点、运行日志、评测报告可以继续回灌到同一套 wiki 中，形成 Memory Layer 与 Teaching Layer 的闭环，符合 `FR-05` 与 `FR-08` 的同时达标。"
+        },
+        {
+          "namespace": "phoenix-docs",
+          "title": "Milestone 0 — 执行顺序计划（Step-based，工程 × 学习同步）",
+          "source_path": "F:\\workspace\\ai\\PhoenixAgent\\docs\\milestones\\M0-plan.md",
+          "stored_path": "namespaces\\phoenix-docs\\import\\milestones\\M0-plan.md",
+          "score": 102,
+          "citation": "F:\\workspace\\ai\\PhoenixAgent\\docs\\milestones\\M0-plan.md:24-26",
+          "excerpt": "- **DoD-1**：`bash tools/phoenix-doctor.sh` 输出 `FAIL=0`；核心条目（Python≥3.11、git、docker daemon、docs 四件套、anthropic/openai/moonshot 三端点可达）全部 PASS。\n- **DoD-2**：`phoenix run --task \"hello\" --runtime=claude` 返回 `status=\"success\"` 的 `TaskResult`。\n- **DoD-3**：AK-llm-wiki 中 `phoenix-docs` namespace 已收录 PRD/TRD/RnD/SPEC；`wiki-query \"PhoenixAgent 愿景\"` 命中 PRD §2。"
+        },
+        {
+          "namespace": "phoenix-docs",
+          "title": "PhoenixAgent 技术需求文档 / 技术白皮书（TRD）",
+          "source_path": "F:\\workspace\\ai\\PhoenixAgent\\docs\\TRD.md",
+          "stored_path": "namespaces\\phoenix-docs\\import\\TRD.md",
+          "score": 58,
+          "citation": "F:\\workspace\\ai\\PhoenixAgent\\docs\\TRD.md:1-3",
+          "excerpt": "# PhoenixAgent 技术需求文档 / 技术白皮书（TRD）\n\n- 版本：v1.0"
+        }
+      ]
+    },
+    "12 层 Harness": {
+      "operation": "wiki-query",
+      "question": "12 层 Harness",
+      "hit_count": 5,
+      "hits": [
+        {
+          "namespace": "phoenix-docs",
+          "title": "PhoenixAgent 技术需求文档 / 技术白皮书（TRD）",
+          "source_path": "F:\\workspace\\ai\\PhoenixAgent\\docs\\TRD.md",
+          "stored_path": "namespaces\\phoenix-docs\\import\\TRD.md",
+          "score": 652,
+          "citation": "F:\\workspace\\ai\\PhoenixAgent\\docs\\TRD.md:442-444",
+          "excerpt": "| FR-01 AgentRuntime | §2 | SPEC v1.1 §2 |\n| FR-02 Model Routing | §3 | SPEC v1.1 §4 |\n| FR-03 12 层 Harness | §4 | SPEC v1.1 §5 |"
+        },
+        {
+          "namespace": "phoenix-docs",
+          "title": "PhoenixAgent 模块 Spec 设计（SPEC）",
+          "source_path": "F:\\workspace\\ai\\PhoenixAgent\\docs\\SPEC.md",
+          "stored_path": "namespaces\\phoenix-docs\\import\\SPEC.md",
+          "score": 500,
+          "citation": "F:\\workspace\\ai\\PhoenixAgent\\docs\\SPEC.md:130-132",
+          "excerpt": "|---|---|---|---|---|\n| `ClaudeAgentSDKRuntime` | `phoenix.runtime.claude` | M0 | `claude-agent-sdk` | M0 即刻可用；复用官方 ReAct Loop + Tools + Permission |\n| `PhoenixCoreRuntime` | `phoenix.runtime.core` | M1 | `anthropic`（用于 Anthropic 兼容调用） | 自研；内部显式实现 12 层 Harness 的开关位 |"
+        },
+        {
+          "namespace": "phoenix-docs",
+          "title": "PhoenixAgent 产品需求文档（PRD）",
+          "source_path": "F:\\workspace\\ai\\PhoenixAgent\\docs\\PRD.md",
+          "stored_path": "namespaces\\phoenix-docs\\import\\PRD.md",
+          "score": 482,
+          "citation": "F:\\workspace\\ai\\PhoenixAgent\\docs\\PRD.md:38-40",
+          "excerpt": "1. 商业 Agent SDK（Claude Agent SDK、OpenAI Agents SDK）能跑通代码实现任务，但对用户而言是黑盒；无法内化\"Harness Engineering\"与\"Agent 架构\"知识。\n2. 顶级模型（Claude Opus / Codex）每百万 token 成本昂贵，长期大量迭代不可持续。\n3. 已有开源资料（sanbuphy/learn-coding-agent 的 12 层 Harness 拆解、Karpathy 的 LLM Wiki 与 Auto-Research 原概念、SWE-bench 的官方 Docker harness）证明\"平庸模型 + 强 Harness\"路线在 2026 年初已标准化。"
+        },
+        {
+          "namespace": "phoenix-docs",
+          "title": "PhoenixAgent 研发分析（RnD-Analysis）",
+          "source_path": "F:\\workspace\\ai\\PhoenixAgent\\docs\\RnD-Analysis.md",
+          "stored_path": "namespaces\\phoenix-docs\\import\\RnD-Analysis.md",
+          "score": 304,
+          "citation": "F:\\workspace\\ai\\PhoenixAgent\\docs\\RnD-Analysis.md:50-52",
+          "excerpt": "| Karpathy Auto-Research gist | Auto-Research 灵感原点 | 社区多个复刻 | 自行实现 Generator-Evaluator 循环 | Auto-Research Layer |\n| Docker Desktop / WSL2 | 本地 Docker 运行 SWE-bench | Windows 11 支持 | 纯 Linux 主机 | Evaluation Layer |\n| sanbuphy/learn-coding-agent | 12 层 Harness 教学蓝本 | 开源活跃 | walkinglabs/learn-harness-engineering | Harness Layer |"
+        },
+        {
+          "namespace": "phoenix-docs",
+          "title": "PhoenixAgent 文档体系导览",
+          "source_path": "F:\\workspace\\ai\\PhoenixAgent\\docs\\README.md",
+          "stored_path": "namespaces\\phoenix-docs\\import\\README.md",
+          "score": 294,
+          "citation": "F:\\workspace\\ai\\PhoenixAgent\\docs\\README.md:14-16",
+          "excerpt": "PhoenixAgent 是单作者 + LLM Agent 协同开发的\"自研 Coding Agent\"，按八层架构（Runtime / Model / Harness / Plugin / Memory / Evaluation / Auto-Research / Teaching）逐层叠加，并以\"工程 ∧ 学习 ∧ 记忆\"三达标交付。\n\n当前阶段：**治理层完整、实现层为零**；M0 之前不写 `src/phoenix/**`。"
+        }
+      ]
+    },
+    "SWE-bench": {
+      "operation": "wiki-query",
+      "question": "SWE-bench",
+      "hit_count": 5,
+      "hits": [
+        {
+          "namespace": "phoenix-docs",
+          "title": "Milestone 0 — 执行顺序计划（Step-based，工程 × 学习同步）",
+          "source_path": "F:\\workspace\\ai\\PhoenixAgent\\docs\\milestones\\M0-plan.md",
+          "stored_path": "namespaces\\phoenix-docs\\import\\milestones\\M0-plan.md",
+          "score": 144,
+          "citation": "F:\\workspace\\ai\\PhoenixAgent\\docs\\milestones\\M0-plan.md:294-296",
+          "excerpt": "- 必读：\n  - SWE-bench 原论文（NeurIPS 2023）+ Verified 技术报告（Anthropic / OpenAI 官方的验证说明）。\n  - SWE-bench 官方 Setup Guide（https://www.swebench.com/）。"
+        },
+        {
+          "namespace": "phoenix-docs",
+          "title": "Milestone 2 — 执行顺序计划（Step-based，工程 × 学习同步）",
+          "source_path": "F:\\workspace\\ai\\PhoenixAgent\\docs\\milestones\\M2-plan.md",
+          "stored_path": "namespaces\\phoenix-docs\\import\\milestones\\M2-plan.md",
+          "score": 132,
+          "citation": "F:\\workspace\\ai\\PhoenixAgent\\docs\\milestones\\M2-plan.md:13-15",
+          "excerpt": "- `AgentRuntime` / `MemoryBackend` / `ToolSpec + PluginRegistry` / `HarnessFlags` / `PermissionRules` / `EvaluationRunner` 在 M1b retrospective 后已再次冻结（SPEC v1.1）。\n- 学习节点 `F-01 ~ F-22`（M0 + M1a + M1b）全部 ingest 并可召回；`M1b-retrospective.md` 已入 wiki。\n- 拥有：Kimi Coding Plan 订阅（`api.moonshot.ai/anthropic` 国际路由）+ Codex API Key + 可本地跑 SWE-bench Verified 的 Docker 环境（M0 Step 8 交付）。"
+        },
+        {
+          "namespace": "phoenix-docs",
+          "title": "PhoenixAgent 技术需求文档 / 技术白皮书（TRD）",
+          "source_path": "F:\\workspace\\ai\\PhoenixAgent\\docs\\TRD.md",
+          "stored_path": "namespaces\\phoenix-docs\\import\\TRD.md",
+          "score": 122,
+          "citation": "F:\\workspace\\ai\\PhoenixAgent\\docs\\TRD.md:236-238",
+          "excerpt": "- 主基准：SWE-bench Verified，官方 Docker harness（`swebench.harness.run_evaluation`）。\n  - 硬件要求：x86_64、120GB 磁盘、16GB+ RAM、8+ 核。\n  - 推荐：epoch.ai 的 SWE-bench-docker 预构建镜像，1 小时跑完 Verified 子集。"
+        },
+        {
+          "namespace": "phoenix-docs",
+          "title": "PhoenixAgent 研发分析（RnD-Analysis）",
+          "source_path": "F:\\workspace\\ai\\PhoenixAgent\\docs\\RnD-Analysis.md",
+          "stored_path": "namespaces\\phoenix-docs\\import\\RnD-Analysis.md",
+          "score": 118,
+          "citation": "F:\\workspace\\ai\\PhoenixAgent\\docs\\RnD-Analysis.md:21-23",
+          "excerpt": "| 技术成熟度 | 所有层有开源或官方成熟实现 | TRD §14 证据表 |\n| 地域可达性 | 香港直连 Codex / Kimi 国际路由 / GitHub / Docker Hub 正常 | Kimi Moonshot `api.moonshot.ai/anthropic` 国际路由、Codex `api.openai.com`、OpenAI Agents SDK 2026-04-15 更新 |\n| 硬件门槛 | SWE-bench Verified 本地运行硬件要求合理（120GB 磁盘、16GB RAM、8 核） | epoch.ai 预构建 Docker 镜像 1h 跑完 Verified 子集 |"
+        },
+        {
+          "namespace": "phoenix-docs",
+          "title": "PhoenixAgent 产品需求文档（PRD）",
+          "source_path": "F:\\workspace\\ai\\PhoenixAgent\\docs\\PRD.md",
+          "stored_path": "namespaces\\phoenix-docs\\import\\PRD.md",
+          "score": 114,
+          "citation": "F:\\workspace\\ai\\PhoenixAgent\\docs\\PRD.md:275-277",
+          "excerpt": "| OpenAI Agents SDK / Codex SDK | https://openai.com/index/the-next-evolution-of-the-agents-sdk/ + https://developers.openai.com/codex/sdk | Runtime 横向对比 |\n| Codex API 2026 Agentic Coding Trends | 查 Anthropic / OpenAI 2026 官方报告（RnD-Analysis 会给出具体链接） | 模型选型背景 |\n| SWE-bench Verified | https://www.swebench.com/ + https://github.com/swe-bench/SWE-bench | 主基准（本地运行核心） |"
+        }
+      ]
+    }
+  },
+  "foundations": {
+    "纯向量 RAG": {
+      "operation": "wiki-query",
+      "question": "纯向量 RAG",
+      "hit_count": 1,
+      "hits": [
+        {
+          "namespace": "foundations",
+          "title": "为什么 PhoenixAgent 先做 LLM Wiki 而不是纯向量 RAG",
+          "source_path": "F:\\workspace\\ai\\PhoenixAgent\\docs\\teaching\\M0\\foundations\\F-mem-1-wiki-why.md",
+          "stored_path": "namespaces\\foundations\\ingest\\F-mem-1-wiki-why.md",
+          "score": 358,
+          "citation": "F:\\workspace\\ai\\PhoenixAgent\\docs\\teaching\\M0\\foundations\\F-mem-1-wiki-why.md:30-32",
+          "excerpt": "### 1. 为什么这里优先 LLM Wiki，而不是纯向量 RAG\n\n纯向量 RAG 的强项是大规模、弱结构、跨语义召回；但 PhoenixAgent 当前最稀缺的不是“海量文档检索能力”，而是**把少量高约束文档编译成稳定语义面**。PRD、TRD、SPEC、规则与 ADR 之间存在大量显式 ID、版本号、章节引用和不变量。若只用 RAG，Agent 每次都要重新切块、重组、解释这些关系；一旦 chunk 边界切坏，或相邻约束落在不同片段里，就会把“闭环规则”退化成“命中几段相关文本”。"
+        }
+      ]
+    }
+  }
+}

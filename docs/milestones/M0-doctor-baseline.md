@@ -1,6 +1,6 @@
 # M0 Doctor Baseline — 环境预检结果与已知偏差登记
 
-- 版本：v0.2（2026-04-20，Step 1 首次运行回填）
+- 版本：v0.6（2026-04-23，Step 6 状态索引补充）
 - 作者：dy
 - 上位文档：`docs/milestones/M0-plan.md` §Step 1、`docs/quality/definition-of-done.md` DoD-M0-1
 - 目的：登记 `bash tools/phoenix-doctor.sh --json` 的本地基线、所有 FAIL 条目的"已知偏差 + 缓解方案"。本文件是 M0 Step 1 退出条件的证据载体（DoD-1 替代路径）。
@@ -120,7 +120,7 @@ bash tools/phoenix-doctor.sh --json > artifacts/doctor-m0-baseline.json
 - [ ] ~~**路径 A**：`FAIL=0`（§2 全部 PASS） → DoD-1 直接成立。~~（本次 FAIL=1，不走 A）
 - [x] **路径 B**：`FAIL=1`（docker），§3 第 1 行已登记"决策=暂缓 / 缓解=Step 8 入口前补 / Owner=dy" → DoD-1 以替代路径成立；进入 Step 8 前必须回头复核本文件。
 - [x] F-01（`docs/teaching/M0/foundations/F-01-react-paradigm.md`）已物理落盘；`ci-check-teaching.py` 对 L-ING-1 的 ingest=false 放 WARN（tier=active 允许草稿期，L-ING-2 兜底）。Step 2 完成 wiki-ingest 后回写 `ingested: true` 并勾选下一行。
-- [ ] F-01 已 ingest 到 AK-llm-wiki（`ingested: true` + `ingested_at` 时间戳）— **Step 2 执行**。
+- [x] F-01 已 ingest 到 AK-llm-wiki（`ingested: true` + `ingested_at` 时间戳）；Step 2 同步完成 `phoenix-docs` 冷启动导入、`F-mem-1` 起草与 ingest，DoD-3 成立。
 
 路径 B 勾起即可推进 Step 2；Step 8 前须重新复核。
 
@@ -140,3 +140,7 @@ bash tools/phoenix-doctor.sh --json > artifacts/doctor-m0-baseline.json
 |---|---|---|
 | v0.1 | 2026-04-19 | 模板创建；待 Step 1 真实运行后填 §1 / §2 / §3 / §4。 |
 | v0.2 | 2026-04-20 | Step 1 首次运行回填：PASS=30 / WARN=2 / FAIL=1（docker）；§3 登记 docker 暂缓 + 2 WARN 附录 + 4 项 doctor 自身 bug 修复（端点 override / PYCMD 空格 / schannel CRL / stdout UTF-8）；§4 勾路径 B + F-01 落盘条。 |
+| v0.3 | 2026-04-23 | Step 2 完成后回填：F-01 ingest 勾选；AK-llm-wiki 已联通 `wiki` / `phoenix memory` 入口，`phoenix-docs` namespace 与 F-mem-1 产物已就位。 |
+| v0.4 | 2026-04-23 | Step 3 已启动：`scripts/smoketest-claude.py`、`logs/`、F-02、F-05a 与 `M0-cost-baseline.md` 已落盘；当前 Claude SDK smoke 受 provider 月限额阻塞，状态以 `docs/milestones/M0-cost-baseline.md` 为准。 |
+| v0.5 | 2026-04-23 | Step 5 完成：`src/phoenix/model/**` 与 `scripts/smoketest-model.py` 已落盘；`codex-base` smoke 成功，`kimi-worker` 在 `https://api.kimi.com/coding/v1/chat/completions` 上 direct 与 `User-Agent: Claude-Code` 均返回 403 whitelist 拒绝，证据归档于 `artifacts/M0/kimi-smoke.json`；F-model-1 已写成并 ingest。 |
+| v0.6 | 2026-04-23 | Step 6 完成：`src/phoenix/plugins/**`、`src/phoenix/cli.py` 与 `phoenix run` 入口已落盘；`phoenix run --task "请调用 echo.say hello" --runtime=claude --model=claude-worker --json` 成功触发 `echo.say` 并返回 `status=success`；F-03 已写成并 ingest。 |

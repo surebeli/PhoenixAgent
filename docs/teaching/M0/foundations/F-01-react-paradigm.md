@@ -12,8 +12,8 @@ related_fr: ["FR-01"]
 related_inv: ["INV-RT-1"]
 related_nodes: []
 replaces: null
-ingested: false
-ingested_at: null
+ingested: true
+ingested_at: 2026-04-23T00:32:22.0654938+08:00
 readers: [llm, human]
 ---
 

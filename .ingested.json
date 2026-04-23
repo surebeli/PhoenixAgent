@@ -1,0 +1,37 @@
+{
+  "F-01": {
+    "ingested_at": "2026-04-23T00:32:22.0654938+08:00",
+    "path": "docs/teaching/M0/foundations/F-01-react-paradigm.md",
+    "slug": "react-paradigm"
+  },
+  "F-mem-1": {
+    "ingested_at": "2026-04-23T00:37:13.4263729+08:00",
+    "path": "docs/teaching/M0/foundations/F-mem-1-wiki-why.md",
+    "slug": "1-wiki-why"
+  },
+  "F-02": {
+    "ingested_at": "2026-04-23T01:15:43.3758159+08:00",
+    "path": "docs/teaching/M0/foundations/F-02-tool-use-protocol.md",
+    "slug": "tool-use-protocol"
+  },
+  "F-05a": {
+    "ingested_at": "2026-04-23T01:15:43.3758159+08:00",
+    "path": "docs/teaching/M0/foundations/F-05a-claude-sdk-surface.md",
+    "slug": "claude-sdk-surface"
+  },
+  "F-05b": {
+    "ingested_at": "2026-04-23T01:40:08.1939869+08:00",
+    "path": "docs/teaching/M0/foundations/F-05b-runtime-abstraction.md",
+    "slug": "runtime-abstraction"
+  },
+  "F-03": {
+    "ingested_at": "2026-04-23T11:25:38.3823442+08:00",
+    "path": "docs/teaching/M0/foundations/F-03-mcp-spec-digest.md",
+    "slug": "mcp-spec-digest"
+  },
+  "F-model-1": {
+    "ingested_at": "2026-04-23T10:50:06.8151704+08:00",
+    "path": "docs/teaching/M0/foundations/F-model-1-routing-and-compliance.md",
+    "slug": "1-routing-and-compliance"
+  }
+}
