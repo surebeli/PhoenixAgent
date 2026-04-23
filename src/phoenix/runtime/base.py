@@ -102,6 +102,14 @@ class TaskResult:
     error: str | None = None
 
 
+@dataclass
+class Episode:
+    task: Task
+    result: TaskResult
+    namespace: str
+    extracted_facts: list[dict[str, JSONValue]] = field(default_factory=list)
+
+
 @runtime_checkable
 class ToolSpec(Protocol):
     name: str
@@ -176,6 +184,7 @@ class AgentRuntime(Protocol):
 __all__ = [
     "AgentEvent",
     "AgentRuntime",
+    "Episode",
     "HookEvent",
     "HookFn",
     "JSONValue",

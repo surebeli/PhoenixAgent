@@ -13,6 +13,7 @@ from typing import Any, Iterator
 
 from .base import (
     AgentEvent,
+    Episode,
     HookEvent,
     HookFn,
     RuntimeConfig,
@@ -143,8 +144,9 @@ class ClaudeAgentSDKRuntime:
         state = self._require_session(handle)
         local_result = self._run_registered_tool_task(handle, task, state)
         if local_result is not None:
-            return local_result
-        return asyncio.run(self._run_task_async(handle, task, state))
+            return self._finalize_task_result(handle, task, state, local_result)
+        result = asyncio.run(self._run_task_async(handle, task, state))
+        return self._finalize_task_result(handle, task, state, result)
 
     def register_tool(self, handle: SessionHandle, tool: ToolSpec) -> None:
         self._require_session(handle).tools.append(tool)
@@ -186,6 +188,7 @@ class ClaudeAgentSDKRuntime:
             return None
 
         tool, tool_args = match
+        self._activate_tool_namespace(handle, tool)
         log_path = task.workspace / "logs" / f"{handle.id}.jsonl"
         logger = _JsonlLogger(log_path, handle.id)
         logger.write(task.id, "session.start", {"runtime": self.name, "model_profile": state.config.model_profile})
@@ -265,6 +268,55 @@ class ClaudeAgentSDKRuntime:
             duration_s=round(duration_s, 3),
             error=error,
         )
+
+    def _finalize_task_result(
+        self,
+        handle: SessionHandle,
+        task: Task,
+        state: _SessionState,
+        result: TaskResult,
+    ) -> TaskResult:
+        if not self._memory_digest_enabled(state.config):
+            return result
+
+        memory = getattr(handle.ctx, "memory", None)
+        if memory is None or not hasattr(memory, "digest"):
+            return result
+
+        namespace = self._active_namespace(handle)
+        digest_result = memory.digest(Episode(task=task, result=result, namespace=namespace))
+        digest_event = AgentEvent(
+            kind="memory_digested",
+            payload={
+                "namespace": namespace,
+                "nodes_updated": digest_result.nodes_updated,
+                "new_facts": digest_result.new_facts,
+                "lint_warnings": digest_result.lint_warnings,
+            },
+            ts=utcnow(),
+        )
+        result.events.append(digest_event)
+        state.events.append(digest_event)
+        return result
+
+    def _memory_digest_enabled(self, cfg: RuntimeConfig) -> bool:
+        flags = cfg.harness_flags
+        if flags is None:
+            return True
+        return bool(getattr(flags, "memory_digest_on_finish", True))
+
+    def _activate_tool_namespace(self, handle: SessionHandle, tool: ToolSpec) -> None:
+        registry = getattr(handle.ctx, "plugins", None)
+        namespace = getattr(tool, "namespace", None) or getattr(tool, "plugin", None) or "default"
+        if registry is not None and hasattr(registry, "activate_namespace"):
+            registry.activate_namespace(str(namespace))
+
+    def _active_namespace(self, handle: SessionHandle) -> str:
+        registry = getattr(handle.ctx, "plugins", None)
+        if registry is None:
+            return "default"
+        namespace = getattr(registry, "active_namespace", "default")
+        return str(namespace or "default")
 
     def _match_tool_call(self, task: Task, tools: list[ToolSpec]) -> tuple[ToolSpec, dict[str, Any]] | None:
         requested_tool = task.constraints.get("tool_name")

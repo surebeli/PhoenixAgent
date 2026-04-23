@@ -91,6 +91,9 @@ class PluginRegistry:
             raise RuntimeError(f"unknown plugin: {name}")
         raise NotImplementedError("plugin reload is not implemented for M0 Step 6")
 
+    def activate_namespace(self, namespace: str) -> None:
+        self._active_namespace = namespace
+
     @property
     def active_namespace(self) -> str:
         return self._active_namespace

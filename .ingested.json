@@ -33,5 +33,10 @@
     "ingested_at": "2026-04-23T10:50:06.8151704+08:00",
     "path": "docs/teaching/M0/foundations/F-model-1-routing-and-compliance.md",
     "slug": "1-routing-and-compliance"
+  },
+  "F-mem-2": {
+    "ingested_at": "2026-04-23T11:56:28.3568212+08:00",
+    "path": "docs/teaching/M0/foundations/F-mem-2-ingest-query-digest.md",
+    "slug": "2-ingest-query-digest"
   }
 }

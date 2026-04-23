@@ -37,7 +37,7 @@ class EchoPlugin:
                 handler=_echo_say,
                 side_effect="none",
                 requires_worktree=False,
-                namespace="default",
+                namespace="echo",
             )
         ]
     )

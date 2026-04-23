@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from phoenix.memory import AKLLMWikiBackend, MemoryBackend
 from phoenix.plugins import EchoPlugin, PluginRegistry
 from phoenix.runtime import PermissionRules, RuntimeConfig, Task, make_runtime
 from phoenix.runtime.base import new_ulid
@@ -20,6 +21,7 @@ class CLIContext:
     model_profile: str
     runtime_name: str
     plugins: PluginRegistry
+    memory: MemoryBackend
 
 
 def _json_default(value: Any) -> Any:
@@ -48,14 +50,16 @@ def _serialize_result(result: Any, runtime_name: str, model_profile: str) -> dic
 
 
 def run_command(args: argparse.Namespace) -> int:
-    registry = PluginRegistry()
+    registry = PluginRegistry(active_namespace="echo")
     registry.register(EchoPlugin())
+    memory = AKLLMWikiBackend()
 
     ctx = CLIContext(
         workspace=ROOT,
         model_profile=args.model,
         runtime_name=args.runtime,
         plugins=registry,
+        memory=memory,
     )
     for plugin in registry.list():
         plugin.on_load(ctx)
