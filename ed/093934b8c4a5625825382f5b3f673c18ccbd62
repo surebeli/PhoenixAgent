@@ -1,0 +1,49 @@
+src/phoenix/memory/akllmwiki.py
+  h_7f04b48fd0b771 4-5,128,130,141-172
+  4cb44a7c288d7573 1-3,6-127,129,131-140,173-264
+src/phoenix/memory/__init__.py
+  4cb44a7c288d7573 1-33
+src/phoenix/plugins/registry.py
+  4cb44a7c288d7573 94-96
+src/phoenix/memory/backend.py
+  4cb44a7c288d7573 1-107
+src/phoenix/runtime/claude.py
+  h_7f04b48fd0b771 288,296,298-299
+  4cb44a7c288d7573 16,147-149,191,272-287,289-295,297,300-320
+docs/teaching/M0/foundations/F-mem-2-ingest-query-digest.md
+  4cb44a7c288d7573 1-14,17-90
+  h_7f04b48fd0b771 15-16
+src/phoenix/runtime/base.py
+  4cb44a7c288d7573 105-112,187
+src/phoenix/cli.py
+  4cb44a7c288d7573 9,24,53,55,62
+.ingested.json
+  4cb44a7c288d7573 36-40
+src/phoenix/plugins/echo.py
+  4cb44a7c288d7573 40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.2",
+  "base_commit_sha": "ed093934b8c4a5625825382f5b3f673c18ccbd62",
+  "prompts": {
+    "4cb44a7c288d7573": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "a74aedf7-601c-4727-a343-7ec1de6bc795",
+        "model": "copilot/grok-code-fast-1"
+      },
+      "human_author": "litianyi",
+      "messages": [],
+      "total_additions": 536,
+      "total_deletions": 5,
+      "accepted_lines": 1529,
+      "overriden_lines": 4
+    }
+  },
+  "humans": {
+    "h_7f04b48fd0b771": {
+      "author": "litianyi"
+    }
+  }
+}
