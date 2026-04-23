@@ -13,7 +13,7 @@ related_inv: ["INV-EV-1", "INV-EV-2", "INV-EV-3"]
 related_nodes: [F-05b, F-model-1]
 replaces: null
 ingested: true
-ingested_at: 2026-04-23T12:12:44.4380573+08:00
+ingested_at: 2026-04-23T12:53:19.1793233+08:00
 readers: [llm, human]
 ---
 
