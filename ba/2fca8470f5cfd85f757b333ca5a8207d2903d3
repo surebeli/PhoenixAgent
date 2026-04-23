@@ -1,5 +1,9 @@
 .ingested.json
-  4cb44a7c288d7573 38-38,43-43
+  4cb44a7c288d7573 38,43
+docs/teaching/M0/foundations/F-mem-2-ingest-query-digest.md
+  4cb44a7c288d7573 16
+docs/teaching/M0/foundations/F-06-eval-methodology.md
+  4cb44a7c288d7573 16
 ---
 {
   "schema_version": "authorship/3.0.0",
@@ -14,10 +18,15 @@
       },
       "human_author": "litianyi",
       "messages": [],
-      "total_additions": 2,
-      "total_deletions": 0,
-      "accepted_lines": 2,
+      "total_additions": 4,
+      "total_deletions": 1046,
+      "accepted_lines": 116,
       "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_7f04b48fd0b771": {
+      "author": "litianyi"
     }
   }
 }
