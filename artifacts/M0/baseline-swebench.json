@@ -1,15 +1,46 @@
 {
-  "_note": "Schema placeholder for M0 Step 8. Replace example values with real baseline data after the first frozen SWE-bench run.",
-  "task_ids": [],
+  "_note": "Frozen from the M0 Step 8 methodology smoke run. This is a single-instance local Docker harness baseline using the gold patch, not the later multi-instance Phoenix runtime KPI baseline.",
+  "task_ids": [
+    "pallets__flask-5014"
+  ],
   "seed": 0,
-  "runtime": "claude",
-  "model": "codex-base",
-  "harness_flags": {},
-  "resolved": [],
+  "runtime": "swebench-local-docker",
+  "model": "gold",
+  "harness_flags": {
+    "dataset_name": "SWE-bench/SWE-bench_Verified",
+    "split": "test",
+    "cache_level": "env",
+    "namespace": "swebench",
+    "max_workers": 1,
+    "timeout_s": 1800,
+    "force_rebuild": false,
+    "clean": false,
+    "windows_compat": {
+      "docker_resource_path": true,
+      "lf_text_writes": true,
+      "resource_shim": true
+    }
+  },
+  "resolved": [
+    "pallets__flask-5014"
+  ],
   "cost": {
     "execution_usd": 0.0,
-    "evaluation_usd": 0.0
+    "evaluation_usd": 0.0,
+    "research_usd": 0.0,
+    "total_usd": 0.0
   },
-  "git_sha": "UNSET",
-  "produced_at": "1970-01-01T00:00:00Z"
+  "duration_s": 144.66,
+  "image": {
+    "name": "swebench/sweb.eval.x86_64.pallets_1776_flask-5014:latest",
+    "digest": "sha256:ffa7af7191f8aca58cc00db4582c7b0cb1aab91d395dc470baeac8cd7a5758ee",
+    "compressed_size_bytes": 1103704773
+  },
+  "artifacts": {
+    "report_file": "artifacts/M0/swebench-first-run/gold.m0-step8-flask-5014-r3.json",
+    "predictions_file": "artifacts/M0/swebench-first-run/m0-step8-flask-5014-r3.predictions.json",
+    "log_dir": "logs/run_evaluation/m0-step8-flask-5014-r3"
+  },
+  "git_sha": "ed093934b8c4a5625825382f5b3f673c18ccbd62",
+  "produced_at": "2026-04-23T12:33:06+08:00"
 }

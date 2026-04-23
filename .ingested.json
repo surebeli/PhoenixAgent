@@ -34,8 +34,13 @@
     "path": "docs/teaching/M0/foundations/F-model-1-routing-and-compliance.md",
     "slug": "1-routing-and-compliance"
   },
+  "F-06": {
+    "ingested_at": "2026-04-23T12:12:44.4380573+08:00",
+    "path": "docs/teaching/M0/foundations/F-06-eval-methodology.md",
+    "slug": "eval-methodology"
+  },
   "F-mem-2": {
-    "ingested_at": "2026-04-23T11:56:28.3568212+08:00",
+    "ingested_at": "2026-04-23T12:12:44.4380573+08:00",
     "path": "docs/teaching/M0/foundations/F-mem-2-ingest-query-digest.md",
     "slug": "2-ingest-query-digest"
   }

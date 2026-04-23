@@ -13,7 +13,7 @@ related_inv: ["INV-MM-1", "INV-MM-2", "INV-MM-3"]
 related_nodes: [F-mem-1, F-03]
 replaces: null
 ingested: true
-ingested_at: 2026-04-23T11:56:28.3568212+08:00
+ingested_at: 2026-04-23T12:12:44.4380573+08:00
 readers: [llm, human]
 ---
 
