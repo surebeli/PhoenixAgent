@@ -5,6 +5,7 @@ import json
 import os
 import re
 import shutil
+import sqlite3
 import tomllib
 from dataclasses import asdict, dataclass, field, is_dataclass
 from pathlib import Path
@@ -29,6 +30,7 @@ from .base import (
 CONFIG_DIR = Path.home() / ".config" / "phoenix"
 KEYS_ENV = CONFIG_DIR / "keys.env"
 MODELS_TOML = CONFIG_DIR / "models.toml"
+TASKS_DB = Path("artifacts") / "phoenix_tasks.sqlite3"
 
 
 def _json_default(value: Any) -> Any:
@@ -293,28 +295,72 @@ class ClaudeAgentSDKRuntime:
         state: _SessionState,
         result: TaskResult,
     ) -> TaskResult:
-        if not self._memory_digest_enabled(state.config):
-            return result
+        if self._memory_digest_enabled(state.config):
+            memory = getattr(handle.ctx, "memory", None)
+            if memory is not None and hasattr(memory, "digest"):
+                namespace = self._active_namespace(handle)
+                digest_result = memory.digest(Episode(task=task, result=result, namespace=namespace))
+                digest_event = AgentEvent(
+                    kind="memory_digested",
+                    payload={
+                        "namespace": namespace,
+                        "nodes_updated": digest_result.nodes_updated,
+                        "new_facts": digest_result.new_facts,
+                        "lint_warnings": digest_result.lint_warnings,
+                    },
+                    ts=utcnow(),
+                )
+                result.events.append(digest_event)
+                state.events.append(digest_event)
 
-        memory = getattr(handle.ctx, "memory", None)
-        if memory is None or not hasattr(memory, "digest"):
-            return result
-
-        namespace = self._active_namespace(handle)
-        digest_result = memory.digest(Episode(task=task, result=result, namespace=namespace))
-        digest_event = AgentEvent(
-            kind="memory_digested",
-            payload={
-                "namespace": namespace,
-                "nodes_updated": digest_result.nodes_updated,
-                "new_facts": digest_result.new_facts,
-                "lint_warnings": digest_result.lint_warnings,
-            },
-            ts=utcnow(),
-        )
-        result.events.append(digest_event)
-        state.events.append(digest_event)
+        self._persist_task_result(task, result, handle.started_at)
         return result
+
+    def _persist_task_result(self, task: Task, result: TaskResult, started_at: Any) -> None:
+        db_path = task.workspace / TASKS_DB
+        db_path.parent.mkdir(parents=True, exist_ok=True)
+        events_jsonl_path: str | None = None
+        if result.artifacts:
+            events_jsonl_path = str(result.artifacts[0])
+
+        with sqlite3.connect(db_path) as conn:
+            conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS phoenix_tasks (
+                  id TEXT PRIMARY KEY,
+                  prompt TEXT NOT NULL,
+                  workspace TEXT NOT NULL,
+                  status TEXT NOT NULL,
+                  plan_json TEXT,
+                  events_jsonl_path TEXT,
+                  tokens_in INTEGER,
+                  tokens_out INTEGER,
+                  started_at TEXT,
+                  finished_at TEXT
+                )
+                """
+            )
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_tasks_status ON phoenix_tasks(status)")
+            conn.execute(
+                """
+                INSERT OR REPLACE INTO phoenix_tasks (
+                  id, prompt, workspace, status, plan_json, events_jsonl_path,
+                  tokens_in, tokens_out, started_at, finished_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    task.id,
+                    task.prompt,
+                    str(task.workspace),
+                    result.status,
+                    json.dumps(result.plan, ensure_ascii=False, default=_json_default) if result.plan is not None else None,
+                    events_jsonl_path,
+                    result.tokens_in,
+                    result.tokens_out,
+                    started_at.isoformat() if hasattr(started_at, "isoformat") else str(started_at),
+                    utcnow().isoformat(),
+                ),
+            )
 
     def _memory_digest_enabled(self, cfg: RuntimeConfig) -> bool:
         flags = cfg.harness_flags
