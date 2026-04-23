@@ -61,14 +61,17 @@ def _load_profiles(path: Path) -> dict[str, dict[str, Any]]:
     return data.get("profiles", {})
 
 
-def _usage_counter(usage: Any, name: str) -> int:
+def _usage_counter(usage: Any, *names: str) -> int:
     if usage is None:
         return 0
-    if isinstance(usage, dict):
-        value = usage.get(name, 0)
-    else:
-        value = getattr(usage, name, 0)
-    return int(value or 0)
+    for name in names:
+        if isinstance(usage, dict):
+            value = usage.get(name, 0)
+        else:
+            value = getattr(usage, name, 0)
+        if value:
+            return int(value)
+    return 0
 
 
 class _JsonlLogger:
@@ -216,6 +219,13 @@ class ClaudeAgentSDKRuntime:
                 "usage": None,
             },
         )
+        self._write_usage_observation(
+            logger,
+            task.id,
+            message_kind="assistant",
+            usage=None,
+            source="local-tool-dispatch",
+        )
 
         try:
             tool_result = self._execute_registered_tool(handle, tool_call, tool, tool_args)
@@ -249,6 +259,13 @@ class ClaudeAgentSDKRuntime:
         if text:
             run_events.append(AgentEvent(kind="message", payload={"text": text, "stop_reason": "stop"}, ts=utcnow()))
         logger.write(task.id, "local.tool_result", tool_payload)
+        self._write_usage_observation(
+            logger,
+            task.id,
+            message_kind="tool_result",
+            usage=None,
+            source="local-tool-dispatch",
+        )
 
         status = "success" if bool(getattr(tool_result, "ok", False)) else "failed"
         duration_s = perf_counter() - start
@@ -455,6 +472,22 @@ class ClaudeAgentSDKRuntime:
                             "usage": message.usage,
                         },
                     )
+                    self._write_usage_observation(
+                        logger,
+                        task.id,
+                        message_kind="assistant",
+                        usage=message.usage,
+                        source="assistant",
+                    )
+                    for tool_result in tool_results:
+                        self._write_usage_observation(
+                            logger,
+                            task.id,
+                            message_kind="tool_result",
+                            usage=message.usage,
+                            source="assistant.tool_result",
+                            tool_use_id=tool_result.get("tool_use_id"),
+                        )
                 elif isinstance(message, ResultMessage):
                     stop_reason = message.stop_reason or stop_reason
                     usage = message.usage or usage
@@ -511,11 +544,33 @@ class ClaudeAgentSDKRuntime:
             plan=None,
             artifacts=[log_path],
             events=run_events,
-            tokens_in=_usage_counter(usage, "input_tokens"),
-            tokens_out=_usage_counter(usage, "output_tokens"),
+            tokens_in=_usage_counter(usage, "input_tokens", "prompt_tokens"),
+            tokens_out=_usage_counter(usage, "output_tokens", "completion_tokens"),
             duration_s=round(duration_s, 3),
             error=error,
         )
+
+    def _write_usage_observation(
+        self,
+        logger: _JsonlLogger,
+        task_id: str,
+        *,
+        message_kind: str,
+        usage: Any,
+        source: str,
+        tool_use_id: str | None = None,
+    ) -> None:
+        payload: dict[str, Any] = {
+            "message_kind": message_kind,
+            "source": source,
+            "prompt_tokens": _usage_counter(usage, "input_tokens", "prompt_tokens"),
+            "completion_tokens": _usage_counter(usage, "output_tokens", "completion_tokens"),
+            "cache_read": _usage_counter(usage, "cache_read_input_tokens", "cache_read_tokens"),
+            "cache_creation": _usage_counter(usage, "cache_creation_input_tokens", "cache_creation_tokens"),
+        }
+        if tool_use_id:
+            payload["tool_use_id"] = tool_use_id
+        logger.write(task_id, "usage.observation", payload)
 
 
 __all__ = ["ClaudeAgentSDKRuntime"]

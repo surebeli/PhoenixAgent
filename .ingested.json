@@ -29,6 +29,11 @@
     "path": "docs/teaching/M0/foundations/F-03-mcp-spec-digest.md",
     "slug": "mcp-spec-digest"
   },
+  "F-04": {
+    "ingested_at": "2026-04-23T13:23:25.2130126+08:00",
+    "path": "docs/teaching/M0/foundations/F-04-context-engineering.md",
+    "slug": "context-engineering"
+  },
   "F-model-1": {
     "ingested_at": "2026-04-23T10:50:06.8151704+08:00",
     "path": "docs/teaching/M0/foundations/F-model-1-routing-and-compliance.md",
