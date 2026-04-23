@@ -1,0 +1,35 @@
+.ingested.json
+  4cb44a7c288d7573 37-41,43
+docs/teaching/M0/foundations/F-06-eval-methodology.md
+  4cb44a7c288d7573 1-84
+docs/milestones/M0-swebench-first-run.md
+  4cb44a7c288d7573 1-125
+sitecustomize.py
+  4cb44a7c288d7573 4,13-31
+artifacts/M0/baseline-swebench.json
+  4cb44a7c288d7573 2-5,7-26,29-42,44-45
+scripts/swebench-first-run.py
+  4cb44a7c288d7573 1-156
+docs/teaching/M0/foundations/F-mem-2-ingest-query-digest.md
+  4cb44a7c288d7573 16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.2",
+  "base_commit_sha": "38087ad01c4906b669df1bf58cf4ad56b9ad2a01",
+  "prompts": {
+    "4cb44a7c288d7573": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "a74aedf7-601c-4727-a343-7ec1de6bc795",
+        "model": "copilot/gpt-5.4"
+      },
+      "human_author": "litianyi",
+      "messages": [],
+      "total_additions": 485,
+      "total_deletions": 34,
+      "accepted_lines": 608,
+      "overriden_lines": 0
+    }
+  }
+}
